@@ -9,14 +9,19 @@
     return objToStrMap(obj);
   }
   function objToStrMap(obj) {
-    var strMap = new Map();
+    if (obj instanceof Map) {
+      // obj.forEach((v, k, m) => {});
+      return obj;
+    } else {
+      var strMap = new Map();
 
-    for (var _i = 0, _Object$keys = Object.keys(obj); _i < _Object$keys.length; _i++) {
-      var k = _Object$keys[_i];
-      strMap.set(k, obj[k]);
+      for (var _i = 0, _Object$keys = Object.keys(obj); _i < _Object$keys.length; _i++) {
+        var k = _Object$keys[_i];
+        strMap.set(k, obj[k]);
+      }
+
+      return strMap;
     }
-
-    return strMap;
   }
 
   function getAfFieldId(afField) {
@@ -121,7 +126,7 @@
 
 
   function init(thisInput) {
-    var fldNames = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : '{"postalCode":"extendedPostalCode", "addressline1":"freeformAddress", "city":"municipality", "landmark":"localName", "state":"countrySubdivisionName"}';
+    var fldNames = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : '{"postalCode":"extendedPostalCode", "addressline1":"_LINE1", "city":"municipality", "landmark":"localName", "state":"countrySubdivisionName"}';
     var searchBoxId = getAfFieldId(thisInput);
     var parentPanel = thisInput.parent;
     loadAtlas().then(function (yourLoc) {
@@ -221,7 +226,12 @@
                 parentPanel.items.forEach(function (item) {
                   if (mapping.get(item.name)) {
                     var key = mapping.get(item.name);
-                    item.value = ui.item.address[key];
+
+                    if ('_LINE1' === key) {
+                      item.value = ui.item.address.streetNumber + ' ' + ui.item.address.streetName;
+                    } else {
+                      item.value = ui.item.address[key];
+                    }
                   }
                 });
                 event.preventDefault();
