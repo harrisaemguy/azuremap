@@ -191,9 +191,14 @@
           map.events.add('ready', function () {
             var datasource = new atlas.source.DataSource();
             map.sources.add(datasource);
-            map.setCamera({
-              center: [yourLoc.lng, yourLoc.lat]
-            }); //Add a layer for rendering point data.
+
+            if (yourLoc) {
+              // if location service is allowed
+              map.setCamera({
+                center: [yourLoc.lng, yourLoc.lat]
+              });
+            } //Add a layer for rendering point data.
+
 
             map.layers.add(new atlas.layer.SymbolLayer(datasource));
 
