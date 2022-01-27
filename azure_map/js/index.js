@@ -126,7 +126,8 @@
 
 
   function init(thisInput) {
-    var fldNames = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : '{"postalCode":"extendedPostalCode", "addressline1":"_LINE1", "city":"municipality", "landmark":"localName", "state":"countrySubdivisionName"}';
+    var showMap = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : true;
+    var fldNames = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : '{"postalCode":"extendedPostalCode", "addressline1":"_LINE1", "city":"municipality", "landmark":"localName", "state":"countrySubdivisionName"}';
     var searchBoxId = getAfFieldId(thisInput);
     var parentPanel = thisInput.parent;
     loadAtlas().then(function (yourLoc) {
@@ -134,12 +135,13 @@
       promise("#".concat(searchBoxId)).then(function () {
         var $div = $('<div>', {
           id: "".concat(searchBoxId, "_map"),
-          "class": 'mapDiv'
+          "class": 'mapDiv',
+          style: "display:".concat(showMap ? 'block' : 'none')
         });
         $("#".concat(searchBoxId, " input")).after($div);
         var searchInputId = $("#".concat(searchBoxId, " input")).attr('id'); // when mapDiv available and visible
 
-        promise("#".concat(searchBoxId, "_map"), true).then(function () {
+        promise("#".concat(searchBoxId, "_map"), showMap).then(function () {
           var divId = searchBoxId + '_map';
           var map = new atlas.Map(divId, {
             center: [-75.89929097426723, 45.31358572144141],
