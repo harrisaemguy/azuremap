@@ -1,0 +1,10 @@
+.me-character-counter {
+  background: white;
+  float: right;
+}
+.me-character-counter.me-character-counter_valid {
+  color: green;
+}
+.me-character-counter.me-character-counter_invalid {
+  color: red;
+}
