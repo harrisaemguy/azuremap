@@ -69,7 +69,7 @@
             break;
         }
 
-        reject(undefined);
+        resolve(undefined);
       });
     });
   } //ex: getUrlParam('wcmmode')
@@ -135,8 +135,7 @@
       promise("#".concat(searchBoxId)).then(function () {
         var $div = $('<div>', {
           id: "".concat(searchBoxId, "_map"),
-          "class": 'mapDiv',
-          style: "display:".concat(showMap ? 'block' : 'none')
+          "class": "mapDiv ".concat(showMap ? 'showMap' : 'hideMap')
         });
         $("#".concat(searchBoxId, " input")).after($div);
         var searchInputId = $("#".concat(searchBoxId, " input")).attr('id'); // when mapDiv available and visible
@@ -154,7 +153,7 @@
             style: 'road',
             authOptions: {
               authType: 'subscriptionKey',
-              subscriptionKey: '1L_SO0IYB4G2_lXaOkv40jEbUazPbywLfgdGgrgsX6Q'
+              subscriptionKey: 'ZPHqM3uJE-KZnDDvtNhcNRGf2Z00pwb0fMBTogs5JRs'
             }
           });
 

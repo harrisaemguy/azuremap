@@ -1,0 +1,286 @@
+/*remove page header and footer*/
+@print {
+  @page :footer {
+    display: none;
+  }
+
+  @page :header {
+    display: none;
+  }
+}
+
+@media print {
+  @page {
+    margin-top: 0;
+    margin-bottom: 0;
+  }
+  body {
+    padding-top: 72px;
+    padding-bottom: 72px;
+  }
+}
+/*remove page header and footer*/
+
+@media print {
+  #content,
+  #page {
+    width: 100%;
+    margin: 0;
+    float: none;
+  }
+
+  @page {
+    margin: 2cm;
+  }
+
+  body {
+    font: 13pt Georgia, 'Times New Roman', Times, serif;
+    line-height: 1.3;
+    background: #fff !important;
+    color: #000;
+  }
+  h1 {
+    font-size: 24pt;
+  }
+  h2,
+  h3,
+  h4 {
+    font-size: 14pt;
+    margin-top: 25px;
+  }
+
+  a {
+    page-break-inside: avoid;
+  }
+  blockquote {
+    page-break-inside: avoid;
+  }
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    page-break-after: avoid;
+    page-break-inside: avoid;
+  }
+  img {
+    page-break-inside: avoid;
+    page-break-after: avoid;
+  }
+  table,
+  pre {
+    page-break-inside: avoid;
+  }
+  ul,
+  ol,
+  dl {
+    page-break-before: avoid;
+  }
+
+  a:link,
+  a:visited,
+  a {
+    background: transparent;
+    color: #520;
+    font-weight: bold;
+    text-decoration: underline;
+    text-align: left;
+  }
+  a {
+    page-break-inside: avoid;
+  }
+  a[href^='http']:after {
+    content: ' <' attr(href) '> ';
+  }
+  $ a:after > img {
+    content: '';
+  }
+  article a[href^='#']:after {
+    content: '';
+  }
+  a:not (:local-link ):after {
+    content: ' <' attr(href) '> ';
+  }
+
+  .entry iframe,
+  ins {
+    display: none;
+    width: 0 !important;
+    height: 0 !important;
+    overflow: hidden !important;
+    line-height: 0pt !important;
+    white-space: nowrap;
+  }
+  .embed-youtube,
+  .embed-responsive {
+    position: absolute;
+    height: 0;
+    overflow: hidden;
+  }
+
+  #header-widgets,
+  nav,
+  aside.mashsb-container,
+  .sidebar,
+  .mashshare-top,
+  .mashshare-bottom,
+  .content-ads,
+  .make-comment,
+  .author-bio,
+  .heading,
+  .related-posts,
+  #decomments-form-add-comment,
+  #breadcrumbs,
+  #footer,
+  .post-byline,
+  .meta-single,
+  .site-title img,
+  .post-tags,
+  .readability {
+    display: none;
+  }
+
+  /*aem special begin*/
+  .guide-tab-stamp-list,
+  .guidebutton,
+  .step.mobileLayout {
+    display: none;
+  }
+
+  .afFooter {
+    display: none;
+  }
+
+  .guideLayout.guideTabbedPanelLayout > .row > div {
+    flex-basis: 0;
+    flex-grow: 999;
+    min-width: 50%;
+    max-width: unset;
+  }
+
+  [id$='_guide-item-container'] > [id$='_guide-item'] {
+    display: block;
+  }
+
+  .afTermsAndConditions > .afTncContentArea {
+    overflow: visible;
+    max-height: unset;
+  }
+
+  .afTabLeftPanel {
+    padding-left: 3.5rem;
+    padding-bottom: 1rem;
+    padding-right: 3.5rem;
+    padding-top: 1rem;
+    border: unset;
+
+    background: #fff;
+    border-color: unset;
+  }
+
+  .afHeader {
+    background: #fff;
+    border: solid 1px black;
+  }
+
+  .card .card-header {
+    background: #fff;
+    border-top: 1px solid rgba(0, 0, 0, 0.125);
+    border-bottom: 1px solid rgba(0, 0, 0, 0.125);
+  }
+
+  .collapse {
+    display: block;
+  }
+
+  .mapDiv,
+  .noPrint {
+    display: none;
+  }
+
+  /*aem specail end*/
+
+  .entry:after {
+    content: '\ Alle Rechte vorbehalten. (c) 2014 - 2016 TechBrain - techbrain.de';
+    color: #999 !important;
+    font-size: 1em;
+    padding-top: 30px;
+  }
+  #header:before {
+    content: '\ Vielen herzlichen Dank für das Ausdrucken unseres Artikels. Wir hoffen, dass auch andere Artikel von uns Ihr Interesse wecken können.';
+    color: #777 !important;
+    font-size: 1em;
+    padding-top: 30px;
+    text-align: center !important;
+  }
+
+  p,
+  address,
+  li,
+  dt,
+  dd,
+  blockquote {
+    font-size: 100%;
+  }
+
+  code,
+  pre {
+    font-family: 'Courier New', Courier, mono;
+  }
+  ul,
+  ol {
+    list-style: square;
+    margin-left: 18pt;
+    margin-bottom: 20pt;
+  }
+  li {
+    line-height: 1.6em;
+  }
+}
+
+.grid-container-3 {
+  display: grid;
+  grid-template-columns: auto auto auto;
+  background-color: #2196f3;
+  padding: 10px;
+}
+.grid-container-3 > * {
+  background-color: rgba(255, 255, 255, 0.8);
+  border: 1px solid rgba(0, 0, 0, 0.8);
+  padding: 20px;
+  font-size: 30px;
+  text-align: left;
+}
+.grid-container-2 {
+  display: grid;
+  grid-template-columns: auto auto;
+  background-color: #2196f3;
+  padding: 10px;
+}
+.grid-container-2 .afCheckBoxItem {
+  width: 100%;
+}
+.grid-container-2 .guideFieldWidget.XfaCheckBox {
+  width: 4rem;
+}
+.grid-container-2 > * {
+  background-color: rgba(255, 255, 255, 0.8);
+  border: 1px solid rgba(0, 0, 0, 0.8);
+  padding: 20px;
+  font-size: 30px;
+  text-align: left;
+}
+.C1R4 {
+  display: grid;
+  grid-template-columns: auto;
+  grid-template-rows: repeat(4, auto);
+  grid-column-gap: 0px;
+  grid-row-gap: 0px;
+  line-height: 1;
+}
+.C1R4 > .decoration {
+  padding-left: 50px;
+  margin-top: -1rem;
+  border-bottom: 1px solid aquamarine;
+}
