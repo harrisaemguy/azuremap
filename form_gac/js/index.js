@@ -1468,6 +1468,28 @@
     grid2Radio(fld, gridTpl);
   }
 
+  function applySuffix(fld, suffix) {
+    var sffixSom = "".concat(fld.panel.somExpression, ".").concat(fld.name, "Suffix[0]");
+    var sffixNd = guideBridge.resolveNode(sffixSom);
+
+    if (sffixNd) {
+      suffix = $(sffixNd.value).text();
+      /*to avoid print out the template*/
+
+      var sffixId = getAfFieldId(sffixNd);
+      $("#".concat(sffixId)).addClass('noPrint');
+    }
+
+    if (suffix) {
+      var fldId = getAfFieldId(fld);
+      var input = $("#".concat(fldId, " input"));
+      input.attr('maxlength', '70');
+      input.parent().append("<span class=\"unit\">".concat(suffix, "</span>"));
+      input.parent().addClass('suffix');
+    }
+  }
+
+  exports.applySuffix = applySuffix;
   exports.grid2Chkbox = grid2Chkbox;
   exports.grid2Radio = grid2Radio;
   exports.grid2RadioLst = grid2RadioLst;
