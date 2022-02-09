@@ -225,8 +225,7 @@
                 map.setCamera({
                   bounds: [ui.item.viewport.topLeftPoint.lon, ui.item.viewport.btmRightPoint.lat, ui.item.viewport.btmRightPoint.lon, ui.item.viewport.topLeftPoint.lat],
                   padding: 30
-                });
-                console.log(ui.item); // allow specify fldNames jsonString
+                }); // allow specify fldNames jsonString
 
                 var mapping = jsonStrToStrMap(fldNames);
                 parentPanel.items.forEach(function (item) {

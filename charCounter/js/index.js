@@ -257,9 +257,11 @@
 
     function init(thisInput) {
       var fldId = getAfFieldId(thisInput);
+      var maxChars = Math.max(501, thisInput.jsonModel.maxChars || '0'); // undefined, '0', '500'
+
       promise('#' + fldId).then(function () {
         $('#' + fldId + ' textarea').characterCounter({
-          maxChars: 20,
+          maxChars: maxChars,
           postCountMessage: 'characters left',
           postCountMessageSingular: 'character left',
           zeroRemainingMessage: 'No characters left',
