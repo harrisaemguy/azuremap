@@ -1,0 +1,8 @@
+.pdf::before {
+  content: '';
+  background: url('../resources/pdf.png');
+  position: absolute;
+  height: 20px;
+  width: 40px;
+  margin-top: -10px;
+}
