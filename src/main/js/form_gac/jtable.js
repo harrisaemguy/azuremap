@@ -166,26 +166,26 @@ export function applyFormTableAjax(
 let surveyTitles = [
   {
     data: 'given_name',
-    title: 'First Name'
+    title: 'First Name',
   },
   {
     data: 'surname',
-    title: 'Last Name'
+    title: 'Last Name',
   },
   {
     data: 'jcr_form_name',
-    title: 'Form'
+    title: 'Form',
   },
   {
     data: 'submitted_date',
     title: 'Submitted',
-	render: function render(data, type) {
+    render: function render(data, type) {
       if (type === 'display') {
-        return data.substring(0,10);
+        return data.substring(0, 10);
       }
 
       return data;
-    }
+    },
   },
   {
     data: 'formId',
@@ -202,14 +202,13 @@ let surveyTitles = [
       }
 
       return data;
-    }
+    },
   },
 ];
 
 function loadSurveys(tbl) {
   let fdm_url =
-    '/content/dam/formsanddocuments-fdm/aem_forms.executeDermisQuery.json?';
-  //alert('loading: ' + fdm_url);
+    '/content/dam/formsanddocuments-fdm/aem_forms.executeDermisQuery.json?'; //alert('loading: ' + fdm_url);
   let inputs = JSON.stringify({});
   let operationName = 'getByStatus';
 
@@ -226,11 +225,14 @@ function loadSurveys(tbl) {
           given_name: item.given_name,
           surname: item.surname,
           jcr_form_name: item.jcr_form_name,
-		  division_mission: item.division_mission,
-		  submitted_date: item.submitted_date,
-		  formId: item.jcr_form_name + '/jcr:content?wcmmode=disabled&dataRef=' + item.id,
-		  position_title: item.position_title,
-		  json_data: item.json_data
+          division_mission: item.division_mission,
+          submitted_date: item.submitted_date,
+          formId:
+            item.jcr_form_name +
+            '/jcr:content?wcmmode=disabled&dataRef=' +
+            item.id,
+          position_title: item.position_title,
+          json_data: item.json_data,
         };
         tbl.row.add(itemData).draw();
       });
@@ -279,83 +281,3 @@ export function applyDataTableAjax(
     loadSurveys(table);
   });
 }
-
-
- var surveyTitles = [
-{
-    data: 'given_name',
-    title: 'First Name'
-  },
-  {
-    data: 'surname',
-    title: 'Last Name'
-  },
-  {
-    data: 'jcr_form_name',
-    title: 'Form'
-  },
-  {
-    data: 'submitted_date',
-    title: 'Submitted',
-	render: function render(data, type) {
-      if (type === 'display') {
-        return data.substring(0,10);
-      }
-
-      return data;
-    }
-  },
-  {
-    data: 'formId',
-    title: 'Approve',
-    render: function render(data, type) {
-      if (type === 'display') {
-        return (
-          '<a href="/content/dam/formsanddocuments/applicationforms/' +
-          data +
-          '">' +
-          'Approve' +
-          '</a>'
-        );
-      }
-
-      return data;
-    }
-  }
-  ];
-
-  function loadSurveys(tbl) {
-    var fdm_url = '/content/dam/formsanddocuments-fdm/aem_forms.executeDermisQuery.json?'; //alert('loading: ' + fdm_url);
-
-    var inputs = JSON.stringify({});
-    var operationName = 'getByStatus';
-    $.ajax({
-      type: 'POST',
-      url: fdm_url,
-      data: {
-        operationName: operationName,
-        operationArguments: inputs
-      },
-      success: function success(data, textStatus, jqXHR) {
-          console.log(data);
-        data.map(function (item) {
-          var itemData = {
-            given_name: item.given_name,
-          surname: item.surname,
-          jcr_form_name: item.jcr_form_name,
-		  division_mission: item.division_mission,
-		  submitted_date: item.submitted_date,
-		  formId: item.jcr_form_name + '/jcr:content?wcmmode=disabled&dataRef=' + item.id,
-		  position_title: item.position_title,
-		  json_data: item.json_data
-          };
-          tbl.row.add(itemData).draw();
-        });
-      },
-      error: function error(xrequest, textStatus, errorThrown) {
-        alert(xrequest.responseText);
-      },
-      cache: false,
-      async: true
-    });
-  }
