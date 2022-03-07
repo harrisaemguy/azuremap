@@ -69,6 +69,8 @@ const sampleTbl = `
   `;
 
 // [{title, desc, path:'/content/dam/formsanddocuments/dc-sandbox/helloworld/jcr:content?wcmmode=disabled'}]
+// http://localhost:4502/content/dam/formsanddocuments/OoPdfFormExample.pdf/jcr:content?type=pdf
+// type: pdfForm, sling:resourceType:fd/fm/xfaforms/render, metadata.jcr:title
 function printAllVals(
   obj,
   objPath = '/content/dam/formsanddocuments',
@@ -93,6 +95,24 @@ function printAllVals(
           cqtags: cqtags,
           mdate: mdate,
           path: objPath + '/' + i + '?wcmmode=disabled',
+        };
+        jsObj.push(obj_i);
+      } else if (
+        obj[i].hasOwnProperty('type') &&
+        obj[i]['type'] === 'pdfForm' &&
+        obj[i].hasOwnProperty('sling:resourceType') &&
+        obj[i]['sling:resourceType'] === 'fd/fm/xfaforms/render'
+      ) {
+        let desc = obj[i].metadata.description || '';
+        let cqtags = obj[i].metadata['cq:tags'] || '';
+        let mdate = moment(obj[i]['jcr:lastModified']).format('YYYY-MM-DD');
+        let obj_i = {
+          name: formName,
+          title: obj[i].metadata.title,
+          desc: desc,
+          cqtags: cqtags,
+          mdate: mdate,
+          path: objPath + '/' + i + '?type=pdf',
         };
         jsObj.push(obj_i);
       }
@@ -155,8 +175,8 @@ export function applyFormTableAjax(
       ordering: true,
       info: false,
       colReorder: true,
-      //dom: 'Bfrtip',
-      //buttons: ['colvis', 'print'],
+      // dom: 'Bfrtip',
+      // buttons: ['colvis', 'print'],
     });
 
     aemJson(table, plHld);
@@ -208,7 +228,7 @@ let surveyTitles = [
 
 function loadSurveys(tbl) {
   let fdm_url =
-    '/content/dam/formsanddocuments-fdm/aem_forms.executeDermisQuery.json?'; //alert('loading: ' + fdm_url);
+    '/content/dam/formsanddocuments-fdm/aem_forms.executeDermisQuery.json?'; // alert('loading: ' + fdm_url);
   let inputs = JSON.stringify({});
   let operationName = 'getByStatus';
 
@@ -273,11 +293,11 @@ export function applyDataTableAjax(
       ordering: true,
       info: false,
       colReorder: true,
-      //dom: 'Bfrtip',
-      //buttons: ['colvis', 'print'],
+      // dom: 'Bfrtip',
+      // buttons: ['colvis', 'print'],
     });
 
-    //aemJson(table, plHld);
+    // aemJson(table, plHld);
     loadSurveys(table);
   });
 }
