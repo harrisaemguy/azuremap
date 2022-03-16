@@ -2,4 +2,4 @@
 
 //export * from '../common/ui_decorator';
 //export * from '../common/inputSuffix';
-export { applyFormTableAjax, applyDataTableAjax } from './jtable';
+export * from './jtable';

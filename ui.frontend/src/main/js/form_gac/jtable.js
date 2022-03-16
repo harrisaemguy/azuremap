@@ -31,12 +31,6 @@ const sampleTitles = [
     data: 'path',
     title: 'Form',
     width: '10%',
-    render: function (data, type) {
-      if (type === 'display') {
-        return `<a target="_blank" href="${data}"><span class="pdf"></span></a>`;
-      }
-      return data;
-    },
   },
   {
     data: 'title',
@@ -94,7 +88,7 @@ function printAllVals(
           desc: desc,
           cqtags: cqtags,
           mdate: mdate,
-          path: objPath + '/' + i + '?wcmmode=disabled',
+          path: `<a target="_blank" href="${objPath}/${i}?wcmmode=disabled"><span class="af">Form</span></a>`,
         };
         jsObj.push(obj_i);
       } else if (
@@ -112,7 +106,7 @@ function printAllVals(
           desc: desc,
           cqtags: cqtags,
           mdate: mdate,
-          path: objPath + '/' + i + '?type=pdf',
+          path: `<a target="_blank" href="${objPath}/${i}?wcmmode=disabled"><span class="pdf"></span></a>`,
         };
         jsObj.push(obj_i);
       }
@@ -179,11 +173,13 @@ export function applyFormTableAjax(
       // buttons: ['colvis', 'print'],
     });
 
-    aemJson(table, plHld);
+    plHld.split(',').map((url) => {
+      aemJson(table, url.trim());
+    });
   });
 }
 
-let surveyTitles = [
+let pendingTblCols = [
   {
     data: 'given_name',
     title: 'First Name',
@@ -226,10 +222,10 @@ let surveyTitles = [
   },
 ];
 
-function loadSurveys(tbl) {
+function loadFDMByStatus(tbl, filter = { status: 'pending' }) {
   let fdm_url =
     '/content/dam/formsanddocuments-fdm/aem_forms.executeDermisQuery.json?'; // alert('loading: ' + fdm_url);
-  let inputs = JSON.stringify({});
+  let inputs = JSON.stringify(filter);
   let operationName = 'getByStatus';
 
   $.ajax({
@@ -268,19 +264,8 @@ function loadSurveys(tbl) {
 export function applyDataTableAjax(
   fld,
   gridTpl = sampleTbl,
-  columns = surveyTitles
+  columns = pendingTblCols
 ) {
-  // let user configure rootDir
-  let plHld = fld.jsonModel.placeholderText;
-  if (
-    plHld &&
-    plHld.startsWith('/content/dam/formsanddocuments') &&
-    plHld.endsWith('.json')
-  );
-  else {
-    plHld = '/content/dam/formsanddocuments.7.json';
-  }
-
   let fldId = getAfFieldId(fld);
   $(`#${fldId} input`).hide().after(gridTpl);
 
@@ -298,6 +283,74 @@ export function applyDataTableAjax(
     });
 
     // aemJson(table, plHld);
-    loadSurveys(table);
+    loadFDMByStatus(table, { status: 'pending' });
+  });
+}
+
+let submitTblCols = [
+  {
+    data: 'given_name',
+    title: 'First Name',
+  },
+  {
+    data: 'surname',
+    title: 'Last Name',
+  },
+  {
+    data: 'jcr_form_name',
+    title: 'Form',
+  },
+  {
+    data: 'submitted_date',
+    title: 'Submitted',
+    render: function render(data, type) {
+      if (type === 'display') {
+        return data.substring(0, 10);
+      }
+
+      return data;
+    },
+  },
+  {
+    data: 'formId',
+    title: 'Approve',
+    render: function render(data, type) {
+      if (type === 'display') {
+        return (
+          '<a href="/content/dam/formsanddocuments/applicationforms/' +
+          data +
+          '">' +
+          'DOR' +
+          '</a>'
+        );
+      }
+
+      return data;
+    },
+  },
+];
+export function loadMyRequest(
+  fld,
+  gridTpl = sampleTbl,
+  columns = submitTblCols
+) {
+  let fldId = getAfFieldId(fld);
+  $(`#${fldId} input`).hide().after(gridTpl);
+
+  promise(`#${fldId} table`).then(() => {
+    let table = $(`#${fldId} table`).DataTable({
+      columns: columns,
+      pageLength: 5,
+      keys: true,
+      paging: true,
+      ordering: true,
+      info: false,
+      colReorder: true,
+      // dom: 'Bfrtip',
+      // buttons: ['colvis', 'print'],
+    });
+
+    // aemJson(table, plHld);
+    loadFDMByStatus(table, { status: 'submitted' });
   });
 }
