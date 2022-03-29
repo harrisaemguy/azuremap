@@ -1,0 +1,47 @@
+.grid-container-3 {
+  display: grid;
+  grid-template-columns: auto auto auto;
+  background-color: #2196f3;
+  padding: 10px;
+  & > * {
+    background-color: rgba(255, 255, 255, 0.8);
+    border: 1px solid rgba(0, 0, 0, 0.8);
+    padding: 20px;
+    font-size: 30px;
+    text-align: left;
+  }
+}
+.grid-container-2 {
+  .afCheckBoxItem {
+    width: 100%;
+  }
+  .guideFieldWidget.XfaCheckBox {
+    width: 4rem;
+  }
+  display: grid;
+  grid-template-columns: auto auto;
+  background-color: #2196f3;
+  padding: 10px;
+  & > * {
+    background-color: rgba(255, 255, 255, 0.8);
+    border: 1px solid rgba(0, 0, 0, 0.8);
+    padding: 20px;
+    font-size: 30px;
+    text-align: left;
+  }
+}
+
+.C1R4 {
+  display: grid;
+  grid-template-columns: auto;
+  grid-template-rows: repeat(4, auto);
+  grid-column-gap: 0px;
+  grid-row-gap: 0px;
+  line-height: 1;
+
+  & > .decoration {
+    padding-left: 50px;
+    margin-top: -1rem;
+    border-bottom: 1px solid aquamarine;
+  }
+}

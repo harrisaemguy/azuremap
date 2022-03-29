@@ -1,0 +1,8 @@
+
+plugins {
+  id "com.cognifide.aem.package"
+}
+
+packageCompose {
+  archiveBaseName = project.name
+}

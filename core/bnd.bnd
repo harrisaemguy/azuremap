@@ -1,0 +1,15 @@
+# The bnd format is very similar to the manifest. 
+# White spaces around the key and value are trimmed.
+# Header which starts with upper case character, is copied to the manifest.
+# Lower case header is variable, which is not copied to the manifest.
+# Directives start with a '-' sign, is an instruction to bnd to do something special.
+# using the macro inside Export-Package/Private-Package is an error;
+
+-nouses: true
+
+#donot include java src into /OSGI-OPT
+-sources: false
+
+-exportcontents: ${packages;NAMED;ca.*}
+Import-Package: !org.tukaani.xz*,!org.brotli.dec*,!org.quartz.*,!io.jsonwebtoken.*,!com.github.*,!com.lowagie.text.*,!org.xhtmlrenderer*,!org.jsoup*,!*.internal.*,!org.bouncycastle.ocsp.*,!org.apache.xml.security.*,!org.apache.jcp.xml.dsig.*, !org.apache.commons.codec.*, !org.apache.poi.*, !JavaAPI.*, org.osgi.*;version=!, com.adobe.fd.workflow.*;version=!, com.day.*;version=!, org.apache.sling.*;version=!, com.fasterxml*;version=!, org.apache.jackrabbit*;version=!, javax*;version=!, *
+  

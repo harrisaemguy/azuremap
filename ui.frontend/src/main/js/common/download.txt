@@ -1,0 +1,37 @@
+// ajax post data, and download generated pdf
+var x=new XMLHttpRequest();
+  x.open("GET", "http://danml.com/wave2.gif", true);
+  x.responseType = 'blob';
+  x.onload=function(e){download(x.response, "dlBinAjax.gif", "image/gif" ); }
+  x.send();
+
+
+
+
+// text download 
+download("hello world", "dlText.txt", "text/plain");
+
+download("data:text/plain,hello%20world", "dlDataUrlText.txt", "text/plain");
+
+download(new Blob(["hello world"]), "dlTextBlob.txt", "text/plain");
+
+var str= "hello world", arr= new Uint8Array(str.length);
+str.split("").forEach(function(a,b){
+  arr[b]=a.charCodeAt();
+});
+download( arr, "textUInt8Array.txt", "text/plain" );
+
+download(document.body.outerHTML, "dlHTML.html", "text/html");
+
+// html bold
+download(new Blob(["hello world".bold()]), "dlHtmlBlob.html", "text/html");
+
+// ajax download
+$.ajax({
+    url: "/download.html", 
+    success: download.bind(true, "text/html", "dlAjaxCallback.html")
+});
+
+// download base64
+download("data:image/gif;base64,R0lGODlhRgAVAIcAAOf5+/Jkebn4/+oMSAAOw==", "dlDataUrlBin.gif", "image/gif");
+

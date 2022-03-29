@@ -1,0 +1,10 @@
+div.suffix {
+  position: relative;
+  display: inline-block;
+}
+
+.suffix .unit {
+  position: absolute;
+  bottom: 1vmin;
+  right: 10px;
+}

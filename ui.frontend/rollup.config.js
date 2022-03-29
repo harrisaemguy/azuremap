@@ -56,7 +56,6 @@ module.exports = function (env, argv) {
             commonjs({
               include: ['node_modules/**', 'src/**/cjs/*'],
             }),
-            typescript({ tsconfig: './tsconfig.json' }),
             replace({
               preventAssignment: true,
               exclude: 'node_modules/**',
@@ -84,7 +83,6 @@ module.exports = function (env, argv) {
                 // Transform React JSX into regular JavaScript code
                 ['@babel/preset-react'],
 
-                ['@babel/typescript'],
               ],
               plugins: [
                 // https://github.com/AlexGilleran/jsx-control-statements

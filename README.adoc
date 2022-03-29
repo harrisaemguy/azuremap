@@ -1,0 +1,84 @@
+
+== 1. Get started
+----
+1. Install oracle JDK 11.09
+2. Install maven (unzip, update PATH, add repo.adobe.com to settings.xml)
+
+    <profile>
+      <id>adobe-public</id>
+      <activation>
+        <activeByDefault>true</activeByDefault>
+      </activation>
+      <repositories>
+        <repository>
+          <id>adobe</id>
+          <name>Nexus Proxy Repository</name>
+          <url>http://repo.adobe.com/nexus/content/groups/public/</url>
+          <layout>default</layout>
+        </repository>
+      </repositories>
+      <pluginRepositories>
+        <pluginRepository>
+          <id>adobe</id>
+          <name>Nexus Proxy Repository</name>
+          <url>http://repo.adobe.com/nexus/content/groups/public/</url>
+          <layout>default</layout>
+        </pluginRepository>
+      </pluginRepositories>
+    </profile>
+
+3. Install gradle (download, unzip, update PATH, update JAVA_HOME)
+4. Install IDE, such as eclipse, or vs code
+----
+== 2. install aem author instance
+----
+5. Install AEM author instance on windows or mac
+   java -jar cq-quickstart-6.5.0.jar -port 4502 -r author,samplecontent -nobrowser
+6. Login to aem package manager (http://localhost:4502/crx/packmgr/index.jsp), upload and install aem-service-pack 6.5.7
+7. Login to aem package manager (http://localhost:4502/crx/packmgr/index.jsp), upload and install aem-fd 6.5.7
+    https://docs.adobe.com/content/help/en/experience-manager-65/forms/install-aem-forms/osgi-installation/installing-configuring-aem-forms-osgi.html
+8. shutdown aem (ctrl-c), update aem conf/sling.properties, add two property
+   sling.bootdelegation.class.com.rsa.jsafe.provider.JsafeJCE=com.rsa.*
+   sling.bootdelegation.class.org.bouncycastle.jce.provider.BouncyCastleProvider=org.bouncycastle.*
+----
+
+== 3. use gradle to build and deploy AEM package
+----
+gradle packageDeploy -Pinstance.list=[http://admin:admin@localhost:4502,http://admin:admin@localhost:4503]
+gradle release -Prelease.useAutomaticVersion=true -Prelease.releaseVersion=1.0.0 -Prelease.newVersion=1.1.0-SNAPSHOT
+
+Only single package or bundle:
+    * gradle :core::bundleInstall
+    * gradle :ui.apps:packageDeploy
+    * gradle :ui.content:packageDeploy
+Synchronizing JCR content from AEM to local file system: 
+    * gradle :ui.content:packageSync
+
+// frequent development task
+packageDeploy
+packageSync
+packageDelete
+packagePurge
+
+bundleInstall
+bundleUninstall
+----  
+
+== 4. release
+----
+// To use release plugin after tested
+1. merge into git master branch
+2. switch to git master branch
+3. run gradle release
+
+// use pipeline to specify release version
+3. gradle release -Prelease.useAutomaticVersion=true -Prelease.releaseVersion=1.0.0 -Prelease.newVersion=1.1.0-SNAPSHOT
+
+// explaination of release task
+1. remove snapshot from gradle.properties
+2. commit, tag, and push up to git repo
+3. increase snapshot version by updating gradle.properties
+4. commit, and push up to git repo
+----
+
+https://helpx.adobe.com/aem-forms/6/view-understand-aem-forms-analytics-reports.html

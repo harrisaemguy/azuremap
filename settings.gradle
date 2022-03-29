@@ -1,0 +1,29 @@
+rootProject.name = "gcpilot" //keep same as group name
+
+//include(":core")
+//include(":ui.apps")
+//include(":ui.content")
+//include(":ui.config")
+
+// dynamically include subprojects
+
+// use project.fileTree, is ConfigurableFileTree
+
+def collection1 = fileTree('.') {
+  include '**/build.gradle'
+  exclude 'buildSrc' // Exclude buildSrc folder, it is a reserved name
+}.collect { relativePath(it.parent).replace(File.separator, ':') }
+
+def collection2 = fileTree('.') {
+  include '**/settings.gradle'
+}.collect { relativePath(it.parent).replace(File.separator, ':') }
+
+def collection3 = collection1 - collection2
+collection3.each {
+  //println 'collection3:        ' + it
+  if(it.length()>1) {
+    //println 'subPrj:        ' + it
+    include(it)
+    //project(":${it}").name = rootProject.name + '_' + it.replace(':', '_')
+  }
+}

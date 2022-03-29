@@ -1,0 +1,56 @@
+
+plugins {
+  id "com.cognifide.aem.package"
+  id "org.siouan.frontend-jdk11"
+}
+
+// npx prettier --write .
+
+//command-line properties with the -D flag, use System.getProperty()
+//command-line properties with the -P flag, use project.getProperty()
+// gradle clean packageCompose -Pbundler=prod
+
+// gradle packageDeploy -Pinstance.name=local-author
+// here we use terser to do minimize, see flag webpack.config.optimization section
+frontend {
+
+  nodeVersion = '14.15.1'
+  nodeInstallDirectory = file("${projectDir}/node")
+
+  //yarnEnabled = true
+  // Related tasks: installYarn , installFrontend , cleanFrontend , assembleFrontend , checkFrontend , publishFrontend
+  //yarnVersion = '1.22.10'
+  //yarnInstallDirectory = file("${projectDir}/yarn")
+
+  // installFrontend
+  installScript = 'install'
+
+  // assembleFrontend
+  assembleScript = project.getProperty('bundler') == 'prod' ? 'run rollup_prod' : 'run rollup'
+}
+
+tasks.register('includePackedLibs', Zip) {
+  archiveBaseName = "${project.name}_${name}"
+  //archiveVersion = "${project.version}"
+  destinationDirectory = packageCompose.destinationDirectory
+  from zipTree(file(packageCompose.archiveFile).absolutePath)
+  from 'build/clientlibs'
+
+  doLast {
+    delete file(packageCompose.archiveFile).absolutePath
+    ant.move(file: file(includePackedLibs.archiveFile).absolutePath, tofile: file(packageCompose.archiveFile).absolutePath)
+  }
+}
+
+tasks.named('packageCompose').configure {
+  archiveBaseName = project.name
+
+  dependsOn tasks.named('installFrontend') //installNode
+  dependsOn tasks.named('assembleFrontend')
+
+  finalizedBy includePackedLibs
+}
+
+installNode.onlyIf {
+  !file("${project.projectDir}/nodejs").exists()
+}

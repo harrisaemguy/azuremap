@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<workspaceFilter version="1.0">
-    <filter root="/apps/dcpilot/osgiconfig"/>
-    <filter root="/apps/dcpilot/apacheDS"/>
-    <filter root="/apps/dcpilot/json_IDP"/>
-    <filter root="/conf/DC"/>
-    <filter root="/apps/dcpilot/config/rewriter/dc18n"/>
-    <filter root="/apps/dcpilot/serviceUser/config" mode="merge"/>
-</workspaceFilter>

@@ -1,0 +1,119 @@
+.buttonA {
+  position: relative;
+}
+.buttonA:before {
+  content: '';
+  position: absolute;
+  right: 16px;
+  top: 50%;
+  margin-top: -12px;
+  width: 24px;
+  height: 24px;
+  border: 2px solid;
+  border-left-color: transparent;
+  border-right-color: transparent;
+  border-radius: 50%;
+  opacity: 0;
+  transition: opacity 0.5s;
+  animation: 0.8s linear infinite rotate;
+}
+.buttonA.sending {
+  pointer-events: none;
+  cursor: not-allowed;
+}
+.buttonA.sending:before {
+  transition-delay: 0.1s;
+  transition-duration: 1s;
+  opacity: 1;
+}
+@keyframes rotate {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+/* spinA */
+.spinA {
+  border: 2px solid #1ecd97;
+  background-color: transparent;
+  height: 60px;
+  line-height: 20px;
+  color: #1ecd97;
+  padding: 0;
+  width: 200px;
+  text-align: center;
+  border-radius: 200px;
+  font-size: 20px;
+  transition: all 200ms ease-in-out;
+}
+.spinA:focus {
+  outline: 0;
+}
+.spinA:hover {
+  background-color: #1ecd97;
+  color: #fff;
+  outline: 0;
+}
+.spinA:active {
+  font-size: 24px;
+  outline: 0;
+}
+.spinA.clicked {
+  color: transparent;
+  background-color: transparent;
+  width: 60px;
+  border-width: 5px;
+  border-color: #ddd;
+  -webkit-animation: turn 5s linear;
+  animation: turn 5s linear;
+  border-top-color: #1ecd97;
+}
+.spinA.done,
+.spinA.done:hover {
+  background-color: #1ecd97;
+  color: #fff;
+  font-family: 'FontAwesome';
+  font-size: 40px;
+  position: relative;
+}
+
+@-webkit-keyframes turn {
+  10% {
+    transform: rotateZ(0deg);
+  }
+  55% {
+    transform: rotatez(360deg);
+  }
+  99% {
+    transform: rotateZ(720deg);
+    background-color: transparent;
+    border-color: #ddd;
+    border-top-color: #1ecd97;
+  }
+  100% {
+    border-color: #1ecd97;
+    background-color: #1ecd97;
+  }
+}
+
+@keyframes turn {
+  10% {
+    transform: rotateZ(0deg);
+  }
+  55% {
+    transform: rotatez(360deg);
+  }
+  99% {
+    transform: rotateZ(720deg);
+    background-color: transparent;
+    border-color: #ddd;
+    border-top-color: #1ecd97;
+  }
+  100% {
+    border-color: #1ecd97;
+    background-color: #1ecd97;
+  }
+}
