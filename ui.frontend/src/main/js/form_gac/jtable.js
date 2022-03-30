@@ -329,10 +329,84 @@ let submitTblCols = [
     },
   },
 ];
+
+let employeeTblCols = [
+  {
+    data: 'emp_no',
+    title: 'Emp No',
+  },
+  {
+    data: 'first_name',
+    title: 'First Name',
+  },
+  {
+    data: 'last_name',
+    title: 'Last Name',
+  },
+  {
+    data: 'birth_date',
+    title: 'Birth Date',
+  },
+  {
+    data: 'dor',
+    title: 'DOR',
+    render: function render(data, type) {
+      if (type === 'display') {
+        return (
+          '<a href="/bin/dbServices.photo?emp_no=' +
+          data +
+          '">' +
+          'DOR' +
+          '</a>'
+        );
+      }
+
+      return data;
+    },
+  },
+];
+function loadDBByStatus(tbl) {
+  let fdm_url = '/bin/dbServices.json';
+  let query = {
+    DATA_SOURCE_NAME: 'fdm.ds1',
+    operationName: 'SELECT',
+    tblName: 'employees',
+    selector: ['emp_no', 'first_name', 'last_name', 'birth_date'],
+    filter: {},
+    limit: 100,
+    offset: 0,
+  };
+  let inputs = JSON.stringify(query);
+
+  $.ajax({
+    type: 'POST',
+    url: fdm_url,
+    data: {
+      operationArguments: inputs,
+    },
+    success: function (data, textStatus, jqXHR) {
+      data.map(function (item) {
+        let itemData = {
+          emp_no: item.emp_no,
+          first_name: item.first_name,
+          last_name: item.last_name,
+          birth_date: item.birth_date,
+          dor: item.emp_no,
+        };
+        tbl.row.add(itemData).draw();
+      });
+    },
+    error: function (xrequest, textStatus, errorThrown) {
+      alert(xrequest.responseText);
+    },
+    cache: false,
+    async: true,
+  });
+}
 export function loadMyRequest(
   fld,
   gridTpl = sampleTbl,
-  columns = submitTblCols
+  columns = employeeTblCols
 ) {
   let fldId = getAfFieldId(fld);
   $(`#${fldId} input`).hide().after(gridTpl);
@@ -350,7 +424,6 @@ export function loadMyRequest(
       // buttons: ['colvis', 'print'],
     });
 
-    // aemJson(table, plHld);
-    loadFDMByStatus(table, { status: 'submitted' });
+    loadDBByStatus(table);
   });
 }

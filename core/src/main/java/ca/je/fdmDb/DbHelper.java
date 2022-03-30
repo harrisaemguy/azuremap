@@ -1,8 +1,11 @@
 package ca.je.fdmDb;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.sql.Connection;
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Optional;
@@ -16,6 +19,7 @@ import javax.servlet.Servlet;
 import javax.servlet.ServletException;
 import javax.sql.DataSource;
 
+import org.apache.commons.io.IOUtils;
 import org.apache.sling.api.SlingHttpServletRequest;
 import org.apache.sling.api.SlingHttpServletResponse;
 import org.apache.sling.api.servlets.SlingAllMethodsServlet;
@@ -34,8 +38,8 @@ import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
 @Component(service = { Servlet.class }, enabled = true)
-@SlingServletPathsStrict(paths = { "/bin/dbServices" }, methods = { "GET", "POST" }, selectors = { ".EMPTY." }, extensions = {
-        "json" }, paths_strict = true)
+@SlingServletPathsStrict(paths = { "/bin/dbServices" }, methods = { "GET", "POST" }, selectors = { ".EMPTY." }, extensions = { "json",
+        "photo" }, paths_strict = true)
 public class DbHelper extends SlingAllMethodsServlet {
 
   private static final long serialVersionUID = 1L;
@@ -50,6 +54,48 @@ public class DbHelper extends SlingAllMethodsServlet {
   // use DataSource directly from factory, or locate datasource dynamically using bundleContext
   // @Reference(target = "(&(objectclass=javax.sql.DataSource)(datasource.name=fdm.ds1))")
   // private DataSource ds;
+
+  // DATA_SOURCE_NAME, tblName, selector, filter
+  @Override
+  protected void doGet(SlingHttpServletRequest request, SlingHttpServletResponse response) throws ServletException, IOException {
+    String reqUri = request.getRequestURI();
+    if ("/bin/dbServices.photo".equals(reqUri)) {
+      int emp_no = Integer.parseInt(request.getParameter("emp_no"));
+      ObjectNode operationArguments = objectMapper.createObjectNode();
+      operationArguments.put("DATA_SOURCE_NAME", "fdm.ds1");
+      operationArguments.put("operationName", "SELECT");
+      operationArguments.put("tblName", "document");
+      ArrayNode selector = operationArguments.withArray("selector");
+      selector.add("photo");
+      selector.add("doc_name");
+      ObjectNode filter = operationArguments.with("filter");
+      filter.put("emp_no", emp_no);
+      try {
+        String result = exec(operationArguments.toString());
+        log.info(result);
+        ArrayNode results = objectMapper.readValue(result, ArrayNode.class);
+        if (results.size() == 1) {
+          String photo64 = results.get(0).get("photo").asText();
+          String doc_name = results.get(0).get("doc_name").asText();
+          if (doc_name.endsWith(".pdf")) {
+            response.setContentType("application/pdf");
+            byte[] content = Base64.getDecoder().decode(photo64);
+            ByteArrayInputStream bis = new ByteArrayInputStream(content);
+            response.setHeader("Content-disposition", "attachment; filename=" + doc_name);
+            response.setHeader("content-length", "" + content.length);
+            OutputStream out = response.getOutputStream();
+            IOUtils.copy(bis, out);
+            out.flush();
+            bis.close();
+          }
+        } else {
+          response.setContentType("application/json");
+          response.getWriter().write(result);
+        }
+      } catch (Exception ex) {
+      }
+    }
+  }
 
   @Override
   protected void doPost(SlingHttpServletRequest req, SlingHttpServletResponse resp) throws ServletException, IOException {

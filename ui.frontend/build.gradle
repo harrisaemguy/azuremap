@@ -4,7 +4,7 @@ plugins {
   id "org.siouan.frontend-jdk11"
 }
 
-// npx prettier --write .
+// npm run prettier:fix
 
 //command-line properties with the -D flag, use System.getProperty()
 //command-line properties with the -P flag, use project.getProperty()
