@@ -352,13 +352,7 @@ let employeeTblCols = [
     title: 'DOR',
     render: function render(data, type) {
       if (type === 'display') {
-        return (
-          '<a href="/bin/dbServices.photo?emp_no=' +
-          data +
-          '">' +
-          'DOR' +
-          '</a>'
-        );
+        return `<a href="#${data}" onclick="return dc.form_gac.downloadDor(${data});">DOR</a>`;
       }
 
       return data;

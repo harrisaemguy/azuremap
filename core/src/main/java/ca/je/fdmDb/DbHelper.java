@@ -39,7 +39,7 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 
 @Component(service = { Servlet.class }, enabled = true)
 @SlingServletPathsStrict(paths = { "/bin/dbServices" }, methods = { "GET", "POST" }, selectors = { ".EMPTY." }, extensions = { "json",
-        "photo" }, paths_strict = true)
+        "dor" }, paths_strict = true)
 public class DbHelper extends SlingAllMethodsServlet {
 
   private static final long serialVersionUID = 1L;
@@ -56,58 +56,71 @@ public class DbHelper extends SlingAllMethodsServlet {
   // private DataSource ds;
 
   // DATA_SOURCE_NAME, tblName, selector, filter
+  private void retrieveDor(SlingHttpServletResponse resp, String operationArguments) throws ServletException {
+    try {
+      String result = exec(operationArguments);
+
+      ArrayNode results = objectMapper.readValue(result, ArrayNode.class);
+      if (results.size() == 1) {
+        String photo64 = results.get(0).get("data").asText();
+        String doc_name = results.get(0).get("FileName").asText();
+        if (doc_name.endsWith(".pdf")) {
+          resp.setContentType("application/pdf");
+          byte[] content = Base64.getDecoder().decode(photo64);
+          ByteArrayInputStream bis = new ByteArrayInputStream(content);
+          resp.setHeader("Content-disposition", "attachment; filename=" + doc_name);
+          resp.setHeader("content-length", "" + content.length);
+          OutputStream out = resp.getOutputStream();
+          IOUtils.copy(bis, out);
+          out.flush();
+          bis.close();
+        }
+      } else {
+        resp.setContentType("application/json");
+        resp.getWriter().write(result);
+      }
+    } catch (Exception ex) {
+      throw new ServletException(ex);
+    }
+  }
+
   @Override
   protected void doGet(SlingHttpServletRequest request, SlingHttpServletResponse response) throws ServletException, IOException {
     String reqUri = request.getRequestURI();
-    if ("/bin/dbServices.photo".equals(reqUri)) {
+    if ("/bin/dbServices.dor".equals(reqUri)) {
       String key = request.getParameter("id");
       ObjectNode operationArguments = objectMapper.createObjectNode();
-      operationArguments.put("DATA_SOURCE_NAME", "document");
+      operationArguments.put("DATA_SOURCE_NAME", "fdm.ds1");
       operationArguments.put("operationName", "SELECT");
-      operationArguments.put("tblName", "Document");
+      operationArguments.put("tblName", "document");
       ArrayNode selector = operationArguments.withArray("selector");
       selector.add("FileName");
-      selector.add("data");      
+      selector.add("data");
       ObjectNode filter = operationArguments.with("filter");
       filter.put("id", key);
-      try {
-        String result = exec(operationArguments.toString());
-        log.info(result);
-        ArrayNode results = objectMapper.readValue(result, ArrayNode.class);
-        if (results.size() == 1) {
-          String photo64 = results.get(0).get("data").asText();
-          String doc_name = results.get(0).get("FileName").asText();
-          if (doc_name.endsWith(".pdf")) {
-            response.setContentType("application/pdf");
-            byte[] content = Base64.getDecoder().decode(photo64);
-            ByteArrayInputStream bis = new ByteArrayInputStream(content);
-            response.setHeader("Content-disposition", "attachment; filename=" + doc_name);
-            response.setHeader("content-length", "" + content.length);
-            OutputStream out = response.getOutputStream();
-            IOUtils.copy(bis, out);
-            out.flush();
-            bis.close();
-          }
-        } else {
-          response.setContentType("application/json");
-          response.getWriter().write(result);
-        }
-      } catch (Exception ex) {
-      }
+      retrieveDor(response, operationArguments.toString());
     }
   }
 
   @Override
   protected void doPost(SlingHttpServletRequest req, SlingHttpServletResponse resp) throws ServletException, IOException {
-    resp.setContentType("application/json");
-    String operationArguments = Optional.ofNullable(req.getParameter("operationArguments")).orElse(null);
-    if (operationArguments != null) {
-      try {
-        String result = exec(operationArguments);
+    String reqUri = req.getRequestURI();
+    if ("/bin/dbServices.dor".equals(reqUri)) {
+      String operationArguments = Optional.ofNullable(req.getParameter("operationArguments")).orElse(null);
+      if (operationArguments != null) {
+        retrieveDor(resp, operationArguments);
+      }
+    } else {
+      resp.setContentType("application/json");
+      String operationArguments = Optional.ofNullable(req.getParameter("operationArguments")).orElse(null);
+      if (operationArguments != null) {
+        try {
+          String result = exec(operationArguments);
 
-        resp.getWriter().write(result);
-      } catch (Exception ex) {
-        throw new ServletException(ex);
+          resp.getWriter().write(result);
+        } catch (Exception ex) {
+          throw new ServletException(ex);
+        }
       }
     }
   }

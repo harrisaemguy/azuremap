@@ -96,10 +96,11 @@ public class SqlUtil {
       }
     }
 
-    if("MySQL".equals(db_vender)) {
-     sql.append(" limit ").append(limit).append(" offset ").append(offset);
-    } if("Microsoft SQL Server".equals(db_vender)) {
-      sql.append(" order by ").append(selector.get(0)).append(" OFFSET ").append(offset).append(" ROWS FETCH NEXT ").append(limit).append(" ROWS ONLY");
+    if ("MySQL".equals(db_vender)) {
+      sql.append(" limit ").append(limit).append(" offset ").append(offset);
+    } else if ("Microsoft SQL Server".equals(db_vender)) {
+      sql.append(" order by ").append(selector.get(0)).append(" OFFSET ").append(offset).append(" ROWS FETCH NEXT ").append(limit)
+              .append(" ROWS ONLY");
     }
 
     Statement stmt = conn.createStatement();
