@@ -60,23 +60,23 @@ public class DbHelper extends SlingAllMethodsServlet {
   protected void doGet(SlingHttpServletRequest request, SlingHttpServletResponse response) throws ServletException, IOException {
     String reqUri = request.getRequestURI();
     if ("/bin/dbServices.photo".equals(reqUri)) {
-      int emp_no = Integer.parseInt(request.getParameter("emp_no"));
+      String key = request.getParameter("id");
       ObjectNode operationArguments = objectMapper.createObjectNode();
-      operationArguments.put("DATA_SOURCE_NAME", "fdm.ds1");
+      operationArguments.put("DATA_SOURCE_NAME", "document");
       operationArguments.put("operationName", "SELECT");
-      operationArguments.put("tblName", "document");
+      operationArguments.put("tblName", "Document");
       ArrayNode selector = operationArguments.withArray("selector");
-      selector.add("photo");
-      selector.add("doc_name");
+      selector.add("FileName");
+      selector.add("data");      
       ObjectNode filter = operationArguments.with("filter");
-      filter.put("emp_no", emp_no);
+      filter.put("id", key);
       try {
         String result = exec(operationArguments.toString());
         log.info(result);
         ArrayNode results = objectMapper.readValue(result, ArrayNode.class);
         if (results.size() == 1) {
-          String photo64 = results.get(0).get("photo").asText();
-          String doc_name = results.get(0).get("doc_name").asText();
+          String photo64 = results.get(0).get("data").asText();
+          String doc_name = results.get(0).get("FileName").asText();
           if (doc_name.endsWith(".pdf")) {
             response.setContentType("application/pdf");
             byte[] content = Base64.getDecoder().decode(photo64);

@@ -39,7 +39,7 @@ public class SqlUtil {
   private static String supported(Connection conn) throws Exception {
     String db_vender = conn.getMetaData().getDatabaseProductName();
     log.info("db vender: " + db_vender);
-    if ("MySQL".equals(db_vender)) {
+    if ("MySQL".equals(db_vender) || "Microsoft SQL Server".equals(db_vender)) {
       return db_vender;
     }
 
@@ -58,6 +58,7 @@ public class SqlUtil {
 
   protected static String select(Connection conn, String tblName, List<String> selector, ObjectNode filter, int offset, int limit) throws Exception {
     // Optional.ofNullable(supported(conn)).orElseThrow(UnsupportedDatabaseException::new);
+    String db_vender = supported(conn);
     StringBuilder sql = new StringBuilder("SELECT");
 
     if (selector != null && selector.size() > 0) {
@@ -95,7 +96,12 @@ public class SqlUtil {
       }
     }
 
-    sql.append(" limit ").append(limit).append(" offset ").append(offset);
+    if("MySQL".equals(db_vender)) {
+     sql.append(" limit ").append(limit).append(" offset ").append(offset);
+    } if("Microsoft SQL Server".equals(db_vender)) {
+      sql.append(" order by ").append(selector.get(0)).append(" OFFSET ").append(offset).append(" ROWS FETCH NEXT ").append(limit).append(" ROWS ONLY");
+    }
+
     Statement stmt = conn.createStatement();
 
     String sqlStr = sql.toString();
