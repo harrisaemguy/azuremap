@@ -82,7 +82,6 @@ module.exports = function (env, argv) {
 
                 // Transform React JSX into regular JavaScript code
                 ['@babel/preset-react'],
-
               ],
               plugins: [
                 // https://github.com/AlexGilleran/jsx-control-statements

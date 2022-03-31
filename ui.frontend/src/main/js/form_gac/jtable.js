@@ -332,27 +332,19 @@ let submitTblCols = [
 
 let employeeTblCols = [
   {
-    data: 'emp_no',
-    title: 'Emp No',
+    data: 'id',
+    title: 'ID',
   },
   {
-    data: 'first_name',
-    title: 'First Name',
-  },
-  {
-    data: 'last_name',
-    title: 'Last Name',
-  },
-  {
-    data: 'birth_date',
-    title: 'Birth Date',
+    data: 'FileName',
+    title: 'File Name',
   },
   {
     data: 'dor',
     title: 'DOR',
     render: function render(data, type) {
       if (type === 'display') {
-        return `<a href="#${data}" onclick="return dc.form_gac.downloadDor(${data});">DOR</a>`;
+        return `<a href="#${data}" onclick="return dc.form_gac.downloadDor('${data}');">DOR</a>`;
       }
 
       return data;
@@ -364,8 +356,8 @@ function loadDBByStatus(tbl) {
   let query = {
     DATA_SOURCE_NAME: 'fdm.ds1',
     operationName: 'SELECT',
-    tblName: 'employees',
-    selector: ['emp_no', 'first_name', 'last_name', 'birth_date'],
+    tblName: 'document',
+    selector: ['id', 'FileName'],
     filter: {},
     limit: 100,
     offset: 0,
@@ -381,11 +373,9 @@ function loadDBByStatus(tbl) {
     success: function (data, textStatus, jqXHR) {
       data.map(function (item) {
         let itemData = {
-          emp_no: item.emp_no,
-          first_name: item.first_name,
-          last_name: item.last_name,
-          birth_date: item.birth_date,
-          dor: item.emp_no,
+          id: item.id,
+          FileName: item.FileName,
+          dor: item.id,
         };
         tbl.row.add(itemData).draw();
       });
