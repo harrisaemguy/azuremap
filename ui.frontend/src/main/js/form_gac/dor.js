@@ -20,7 +20,6 @@ export function downloadDor(id) {
     responseType: 'arraybuffer',
     headers: {
       'Content-Type': 'application/json',
-      Accept: 'application/pdf',
     },
   };
 
@@ -31,7 +30,7 @@ export function downloadDor(id) {
       let startFileNameIndex = headerLine.indexOf('filename=') + 9;
       let filename = headerLine.substring(startFileNameIndex);
       filename = filename || 'jsHtml.pdf';
-      download(response.data, filename, 'application/pdf');
+      download(response.data, filename, response.headers['content-type']);
     })
     .catch(function (error) {
       console.log(error);
