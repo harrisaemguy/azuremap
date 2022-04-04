@@ -72,29 +72,6 @@ export function getRoundMinutes(ms) {
   ).toFixed(2);
 }
 
-// To display inline img or pdf
-// <embed src="the.pdf" width="500" height="375" type="application/pdf">
-// <img src="the.png" width="500" height="375">
-// good for text files and binary files
-
-// readUserSelectedFile_asDataURL(ele[0][0].files[0]).then((result)=>{image.src = result});
-// or
-// read blob from servlet output:
-// let arrayBuf = oReq.response;
-// let blob = new Blob([ arrayBuf ], {});
-// readUserSelectedFile_asDataURL(blob).then((result)=>{image.src = result});
-export function readBlob2dom_asDataURL(file) {
-  return new Promise(function (resolve) {
-    let reader = new FileReader();
-    reader.addEventListener('load', (event) => {
-      resolve(event.target.result);
-    });
-
-    // Convert data to base64
-    reader.readAsDataURL(file);
-  });
-}
-
 // let blob = dataURLtoBlob('data:text/plain;base64,YWFhYWFhYQ==');
 export function dataURLtoBlob(dataURL) {
   let arr = dataURL.split(','),
@@ -106,52 +83,6 @@ export function dataURLtoBlob(dataURL) {
     u8arr[n] = byteString.charCodeAt(n);
   }
   return new Blob([u8arr], { type: mime });
-}
-
-export function embedImgAttachment(afField, fileBlob, alt = 'Uploaded image') {
-  let fupid = getAfFieldId(afField);
-
-  readBlob2dom_asDataURL(fileBlob).then((result) => {
-    // remove if image existing
-    $('#' + fupid + ' img').remove();
-    $('#' + fupid + ' embed').remove();
-    if (result.startsWith('data:image/')) {
-      let image = new Image();
-      image.alt = alt;
-      image.width = 300;
-      image.height = 200;
-      image.addEventListener('load', () => {
-        // alert(this.width + " X " + this.height);
-        $('#' + fupid + ' .guideFieldWidget')[0].prepend(image);
-        // no need validation
-        // disableFieldValidation(afField);
-
-        // display and focus status to screen reader
-        $('#inform_uploaded')
-          .attr('role', 'status')
-          .attr('tabindex', -1)
-          .focus();
-      });
-
-      image.src = result;
-    }
-  });
-}
-
-// jQuery not able to create <embed>, so use document.createElement
-export function embedPdfAttachment(afField, fileBlob) {
-  let fupid = getAfFieldId(afField);
-  // remove pdf if existing
-  $('#' + fupid + ' img').remove();
-  $('#' + fupid + ' embed').remove();
-  let pdf = document.createElement('embed');
-  pdf.setAttribute('class', 'showAttached');
-  pdf.setAttribute('type', 'application/pdf');
-  $('#' + fupid + ' .guideFieldWidget')[0].prepend(pdf);
-
-  readBlob2dom_asDataURL(fileBlob).then((result) => {
-    $('#' + fupid + ' embed').attr('src', result);
-  });
 }
 
 // <a href="#{{fldId}}" data-som="{{fldSom}}" onclick="return IRCC.focus(this);">

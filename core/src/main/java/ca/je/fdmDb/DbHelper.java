@@ -1,13 +1,17 @@
 package ca.je.fdmDb;
 
 import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
 import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.Base64;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.Executors;
@@ -22,6 +26,8 @@ import javax.sql.DataSource;
 import org.apache.commons.io.IOUtils;
 import org.apache.sling.api.SlingHttpServletRequest;
 import org.apache.sling.api.SlingHttpServletResponse;
+import org.apache.sling.api.request.RequestParameter;
+import org.apache.sling.api.request.RequestParameterMap;
 import org.apache.sling.api.servlets.SlingAllMethodsServlet;
 import org.apache.sling.servlets.annotations.SlingServletPathsStrict;
 import org.osgi.framework.BundleContext;
@@ -58,7 +64,7 @@ public class DbHelper extends SlingAllMethodsServlet {
   // DATA_SOURCE_NAME, tblName, selector, filter
   private void retrieveDor(SlingHttpServletResponse resp, String operationArguments) throws ServletException {
     try {
-      String result = exec(operationArguments);
+      String result = exec(objectMapper.readValue(operationArguments, ObjectNode.class));
 
       ArrayNode results = objectMapper.readValue(result, ArrayNode.class);
       if (results.size() == 1) {
@@ -66,15 +72,20 @@ public class DbHelper extends SlingAllMethodsServlet {
         String doc_name = results.get(0).get("FileName").asText();
         if (doc_name.endsWith(".pdf")) {
           resp.setContentType("application/pdf");
-          byte[] content = Base64.getDecoder().decode(photo64);
-          ByteArrayInputStream bis = new ByteArrayInputStream(content);
-          resp.setHeader("Content-disposition", "attachment; filename=" + doc_name);
-          resp.setHeader("content-length", "" + content.length);
-          OutputStream out = resp.getOutputStream();
-          IOUtils.copy(bis, out);
-          out.flush();
-          bis.close();
+        } else if (doc_name.endsWith(".txt")) {
+          resp.setContentType("text/plain");
+        } else {
+          resp.setContentType("image/png");
         }
+
+        byte[] content = Base64.getDecoder().decode(photo64);
+        ByteArrayInputStream bis = new ByteArrayInputStream(content);
+        resp.setHeader("Content-disposition", "attachment; filename=" + doc_name);
+        resp.setHeader("content-length", "" + content.length);
+        OutputStream out = resp.getOutputStream();
+        IOUtils.copy(bis, out);
+        out.flush();
+        bis.close();
       } else {
         resp.setContentType("application/json");
         resp.getWriter().write(result);
@@ -113,9 +124,44 @@ public class DbHelper extends SlingAllMethodsServlet {
     } else {
       resp.setContentType("application/json");
       String operationArguments = Optional.ofNullable(req.getParameter("operationArguments")).orElse(null);
-      if (operationArguments != null) {
+      boolean isUpload = false;
+
+      RequestParameterMap requestParameterMap = req.getRequestParameterMap();
+      for (Map.Entry<String, RequestParameter[]> entry : requestParameterMap.entrySet()) {
+        String reqKey = entry.getKey();
+        log.info("req entry Key: " + reqKey);
+        RequestParameter[] params = entry.getValue();
+        for (RequestParameter param : params) {
+          if (!param.isFormField()) {
+            // has a file
+            isUpload = true;
+
+            ObjectNode oprArguments = objectMapper.readValue(operationArguments, ObjectNode.class);
+            oprArguments.with("payload").put("FileName", param.getFileName());
+
+            ByteArrayOutputStream bos = new ByteArrayOutputStream();
+            InputStream upload = param.getInputStream();
+            IOUtils.copy(upload, bos);
+            oprArguments.with("payload").put("data", bos.toByteArray());
+            upload.close();
+            bos.close();
+
+            // save to document
+            try {
+              exec(oprArguments);
+            } catch (Exception ex) {
+              throw new ServletException(ex);
+            }
+          }
+        }
+      }
+
+      if (isUpload) {
+        resp.getWriter().write("[]");
+      } else if (operationArguments != null) {
+        // regular case, just do database
         try {
-          String result = exec(operationArguments);
+          String result = exec(objectMapper.readValue(operationArguments, ObjectNode.class));
 
           resp.getWriter().write(result);
         } catch (Exception ex) {
@@ -132,11 +178,11 @@ public class DbHelper extends SlingAllMethodsServlet {
   String insertResult = "[{\"key\": 10051}]";
 
   // tblName, selector, filter
-  private String exec(String operationArguments) throws Exception {
+  private String exec(ObjectNode arguments) throws Exception {
 
-    log.info("operationArguments: " + operationArguments);
+    // log.info("operationArguments: " + operationArguments);
 
-    ObjectNode arguments = this.objectMapper.readValue(operationArguments, ObjectNode.class);
+    // ObjectNode arguments = this.objectMapper.readValue(operationArguments, ObjectNode.class);
 
     String operationName = arguments.has("operationName") ? arguments.get("operationName").asText() : null;
     String tblName = arguments.has("tblName") ? arguments.get("tblName").asText() : null;
@@ -145,6 +191,18 @@ public class DbHelper extends SlingAllMethodsServlet {
 
     if (operationName == null || tblName == null) {
       throw new Exception("Illegal operationArguments!!!");
+    }
+
+    if (arguments.has("payload")) {
+      ObjectNode payload = arguments.with("payload");
+      Iterator<String> names = payload.fieldNames();
+      while (names.hasNext()) {
+        String name = names.next();
+        if (name.endsWith("_B")) {
+          payload.put(name.substring(0, name.length() - 2), payload.get(name).binaryValue());
+          payload.remove(name);
+        }
+      }
     }
 
     Connection connection = null;

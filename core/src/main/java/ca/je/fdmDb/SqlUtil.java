@@ -5,7 +5,6 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Statement;
 import java.util.ArrayList;
-import java.util.Base64;
 import java.util.Iterator;
 import java.util.List;
 
@@ -44,16 +43,6 @@ public class SqlUtil {
     }
 
     return null;
-  }
-
-  private static boolean isBase64(String someString) {
-    try {
-      Base64.getMimeDecoder().decode(someString);
-    } catch (IllegalArgumentException ex) {
-      return false;
-    }
-
-    return true;
   }
 
   protected static String select(Connection conn, String tblName, List<String> selector, ObjectNode filter, int offset, int limit) throws Exception {
@@ -158,7 +147,7 @@ public class SqlUtil {
     for (int i = 0; i < valLst.size(); i++) {
       JsonNode val = valLst.get(i);
 
-      if (isBase64(val.asText())) {
+      if (val.isBinary()) {
         byte[] bytes = val.binaryValue();
         ps.setBytes(i + 1, bytes);
       } else {
@@ -213,7 +202,7 @@ public class SqlUtil {
       for (int i = 0; i < valLst.size(); i++) {
         JsonNode val = valLst.get(i);
 
-        if (isBase64(val.asText())) {
+        if (val.isBinary()) {
           byte[] bytes = val.binaryValue();
           ps.setBytes(i + 1, bytes);
         } else {
@@ -229,13 +218,13 @@ public class SqlUtil {
     StringBuilder sql = new StringBuilder("DELETE FROM ");
     sql.append(tblName);
     sql.append(" WHERE");
-    sql.append(" ").append(idName).append("=").append(idVal);
-
+    sql.append(" ").append(idName).append("=?");
     String sqlStr = sql.toString();
     log.info("delete(): " + sqlStr);
-    Statement stmt = conn.createStatement();
-    stmt.executeUpdate(sqlStr);
-    stmt.closeOnCompletion();
-  }
 
+    PreparedStatement ps = conn.prepareStatement(sqlStr);
+    ps.setString(1, idVal);
+    ps.executeUpdate();
+    ps.closeOnCompletion();
+  }
 }

@@ -56,8 +56,6 @@ const sampleTitles = [
 ];
 
 const sampleTbl = `
-  <style>
-  </style>
   <table class="display nowrap" style="width:100%">
   </table>
   `;
@@ -357,7 +355,7 @@ function loadDBByStatus(tbl) {
     DATA_SOURCE_NAME: 'fdm.ds1',
     operationName: 'SELECT',
     tblName: 'document',
-    selector: ['id', 'FileName'],
+    selector: ['doc_id', 'id', 'FileName'],
     filter: {},
     limit: 100,
     offset: 0,
@@ -375,7 +373,7 @@ function loadDBByStatus(tbl) {
         let itemData = {
           id: item.id,
           FileName: item.FileName,
-          dor: item.id,
+          dor: item.doc_id,
         };
         tbl.row.add(itemData).draw();
       });
@@ -409,5 +407,14 @@ export function loadMyRequest(
     });
 
     loadDBByStatus(table);
+
+    // so that you can refresh the table
+    Object.defineProperty(fld, 'valueExt', {
+      set(dataObj) {
+        console.log('clear table');
+        table.clear().draw();
+        loadDBByStatus(table);
+      },
+    });
   });
 }
