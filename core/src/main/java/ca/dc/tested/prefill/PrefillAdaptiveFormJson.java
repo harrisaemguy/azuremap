@@ -61,10 +61,14 @@ public class PrefillAdaptiveFormJson implements DataProvider {
     try {
       UserManager um = ((JackrabbitSession) session).getUserManager();
       Authorizable loggedinUser = um.getAuthorizable(session.getUserID());
-      String fname = loggedinUser.getProperty("profile/givenName")[0].getString();
-      prefillObj.with("data").put("fname", fname);
-      String email = loggedinUser.getProperty("profile/email")[0].getString();
-      prefillObj.with("data").put("email", email);
+      if (loggedinUser.hasProperty("profile/givenName")) {
+        String fname = loggedinUser.getProperty("profile/givenName")[0].getString();
+        prefillObj.with("data").put("fname", fname);
+      }
+      if (loggedinUser.hasProperty("profile/email")) {
+        String email = loggedinUser.getProperty("profile/email")[0].getString();
+        prefillObj.with("data").put("email", email);
+      }
     } catch (Exception e) {
       throw new FormsException(e);
     }
