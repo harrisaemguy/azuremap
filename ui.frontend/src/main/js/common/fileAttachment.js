@@ -68,7 +68,7 @@ export function observeFileUpload(
 
   //fileItemList, the node to be monitored
   let fupid = getAfFieldId(afField);
-  if(tblHolder) {
+  if (tblHolder) {
     jtableRef.set(fupid, tblHolder);
   }
   let fileItemListEle = $('#' + fupid + ' .guide-fu-fileItemList')[0];
@@ -386,7 +386,7 @@ export function sampleFileChangeHandler(
   if (proms.length > 0) {
     Promise.all(proms).then((sFlags) => {
       console.log('Submit status:' + sFlags);
-      if(jtableRef.get(fupid)) {
+      if (jtableRef.get(fupid)) {
         // redraw table
         jtableRef.get(fupid).valueExt = {};
       }
