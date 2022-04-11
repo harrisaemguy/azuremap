@@ -12,13 +12,20 @@ export function rootInit(fld) {
     success: function (guideResultObject) {
       console.log('data received' + guideResultObject.data);
       let dataObj = JSON.parse(guideResultObject.data);
-      let lastDate = moment(dataObj.data.lastModified).format('YYYY-MM-DD, h:mm:ss');
+      let lastDate = moment(dataObj.data.lastModified).format(
+        'YYYY-MM-DD, h:mm:ss'
+      );
       let msg =
         '<p><b>Last update: </b>' +
         lastDate +
         ' -------- <b>Login as:</b>' +
         dataObj.data.fname +
         '</p>';
+      if (dataObj.data.metadata) {
+        dataObj.data.metadata.map((mdata) => {
+          msg += mdata.key + ': ' + mdata.value + '<br>';
+        });
+      }
 
       renderStaticHtml(fld, msg);
     },
