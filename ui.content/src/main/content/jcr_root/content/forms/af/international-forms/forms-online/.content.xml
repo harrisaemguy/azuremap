@@ -18,7 +18,7 @@
             sling:resourceType="fd/af/components/guideContainer"
             actionType="fd/fp/components/actions/portalsubmit"
             autoSaveStrategyType="fd/fp/components/actions/autosave/timebased"
-            clientLibRef="ca-gc-international-forms.commons,dc.form_gac"
+            clientLibRef="ca-gc-international-forms.commons,dc.forms_online"
             cssFileRef="/etc/clientlibs/fd/themes/themeLibrary/wetcompliance/css/theme.css"
             disableSwipeGesture="{Boolean}false"
             dorType="none"
@@ -78,7 +78,7 @@
                             nonNavigable="{Boolean}true"/>
                         <fd:rules jcr:primaryType="nt:unstructured"/>
                         <fd:scripts
-                            fd:init="[{&quot;script&quot;:{&quot;content&quot;:&quot;dc.form_gac.userNameInit(this);&quot;\,&quot;event&quot;:&quot;Initialize&quot;\,&quot;field&quot;:&quot;guide.guideRootPanel.userName&quot;}\,&quot;nodeName&quot;:&quot;SCRIPTMODEL&quot;\,&quot;version&quot;:1\,&quot;enabled&quot;:true}]"
+                            fd:init="[{&quot;script&quot;:{&quot;content&quot;:&quot;dc.forms_online.userNameInit(this);&quot;\,&quot;event&quot;:&quot;Initialize&quot;\,&quot;field&quot;:&quot;guide.guideRootPanel.userName&quot;}\,&quot;nodeName&quot;:&quot;SCRIPTMODEL&quot;\,&quot;version&quot;:1\,&quot;enabled&quot;:true}]"
                             jcr:primaryType="nt:unstructured"/>
                     </guidetextdraw>
                     <panel1649723226425
@@ -124,7 +124,7 @@
                                         textIsRich="[true,true,true]">
                                         <fd:rules jcr:primaryType="nt:unstructured"/>
                                         <fd:scripts
-                                            fd:init="[{&quot;script&quot;:{&quot;content&quot;:&quot;dc.form_gac.applyFormTableAjax(this);&quot;\,&quot;event&quot;:&quot;Initialize&quot;\,&quot;field&quot;:&quot;guide.guideRootPanel.basics1.textbox1455878674524&quot;}\,&quot;nodeName&quot;:&quot;SCRIPTMODEL&quot;\,&quot;version&quot;:1\,&quot;enabled&quot;:true}]"
+                                            fd:init="[{&quot;script&quot;:{&quot;content&quot;:&quot;dc.forms_online.applyFormTableAjax(this);&quot;\,&quot;event&quot;:&quot;Initialize&quot;\,&quot;field&quot;:&quot;guide.guideRootPanel.tabs.basics1.textbox1455878674524&quot;}\,&quot;nodeName&quot;:&quot;SCRIPTMODEL&quot;\,&quot;version&quot;:1\,&quot;enabled&quot;:true}]"
                                             jcr:primaryType="nt:unstructured"/>
                                     </guidetextbox>
                                 </items>

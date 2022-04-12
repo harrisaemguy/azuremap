@@ -1,4 +1,4 @@
-rootProject.name = "gcpilot" //keep same as group name
+rootProject.name = "ca-gc-international-forms" //keep same as group name
 
 //include(":core")
 //include(":ui.apps")

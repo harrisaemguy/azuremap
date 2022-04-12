@@ -336,7 +336,7 @@ let employeeTblCols = [
     title: 'DOR',
     render: function render(data, type) {
       if (type === 'display') {
-        return `<a href="#${data}" onclick="return dc.form_gac.downloadDor('${data}');">DOR</a>`;
+        return `<a href="#${data}" onclick="return dc.forms_online.downloadDor('${data}');">DOR</a>`;
       }
 
       return data;
