@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <workspaceFilter version="1.0">
-    <filter root="/content/dam/formsanddocuments/dc-sandbox"/>
-    <filter root="/content/forms/af/dc-sandbox"/>   
+    <filter root="/content/dam/formsanddocuments/international-forms/forms-online"/>
+    <filter root="/content/forms/af/international-forms/forms-online"/>
+    <filter root="/content/dam/formsanddocuments/international-forms/jose"/>
+    <filter root="/content/forms/af/international-forms/jose"/>
 </workspaceFilter>
