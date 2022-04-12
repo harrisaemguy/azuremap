@@ -23,28 +23,26 @@ cdt(window, $);
 
 const sampleTitles = [
   {
-    data: 'name',
-    title: 'Number',
-    width: '15%',
+    title: 'id',
+    data: null,
+    searchable: false,
+    orderable: false,
+    width: '10%',
+    render: (data, type, row, meta) => meta.row + 1,
   },
   {
     data: 'path',
-    title: 'Form',
-    width: '10%',
-  },
-  {
-    data: 'title',
-    title: 'Title',
-    width: '25%',
+    title: 'Form Number',
+    width: '20%',
   },
   {
     data: 'desc',
     title: 'Description',
-    width: '30%',
+    width: '50%',
   },
   {
     data: 'mdate',
-    title: 'Dete Modified',
+    title: 'Modified Date',
     width: '20%',
   },
   {
@@ -81,12 +79,10 @@ function printAllVals(
         let cqtags = obj[i].metadata['cq:tags'] || '';
         let mdate = moment(obj[i]['jcr:lastModified']).format('YYYY-MM-DD');
         let obj_i = {
-          name: formName,
-          title: obj[i].metadata.title,
-          desc: desc,
+          desc: desc || obj[i].metadata.title,
           cqtags: cqtags,
           mdate: mdate,
-          path: `<a target="_blank" href="${objPath}/${i}?wcmmode=disabled"><span class="af">Form</span></a>`,
+          path: `<a target="_blank" href="${objPath}/${i}?wcmmode=disabled">${formName}</a>`,
         };
         jsObj.push(obj_i);
       } else if (
@@ -99,12 +95,10 @@ function printAllVals(
         let cqtags = obj[i].metadata['cq:tags'] || '';
         let mdate = moment(obj[i]['jcr:lastModified']).format('YYYY-MM-DD');
         let obj_i = {
-          name: formName,
-          title: obj[i].metadata.title,
-          desc: desc,
+          desc: desc || obj[i].metadata.title,
           cqtags: cqtags,
           mdate: mdate,
-          path: `<a target="_blank" href="${objPath}/${i}?wcmmode=disabled"><span class="pdf"></span></a>`,
+          path: `<a target="_blank" href="${objPath}/${i}?wcmmode=disabled">${formName}</a>`,
         };
         jsObj.push(obj_i);
       }

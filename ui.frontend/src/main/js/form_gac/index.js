@@ -39,3 +39,9 @@ export function rootInit(fld) {
     },
   });
 }
+
+export function userNameInit(fld) {
+  let user = gc.international._getUserInfoBySignetID();
+  let userName = `<p>${user.surname}, ${user.givenName}</p>`;
+  renderStaticHtml(fld, userName);
+}
