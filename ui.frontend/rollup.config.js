@@ -50,7 +50,7 @@ module.exports = function (env, argv) {
         return {
           input: inputFile,
           plugins: [
-            nodeResolve({ preferBuiltins: false }),
+            nodeResolve({ preferBuiltins: false, browser: true }),
             autoInstall(),
             json(),
             commonjs({

@@ -34,7 +34,7 @@ tasks.register('includePackedLibs', Zip) {
   //archiveVersion = "${project.version}"
   destinationDirectory = packageCompose.destinationDirectory
   from zipTree(file(packageCompose.archiveFile).absolutePath)
-  from 'build/clientlibs'
+  from 'target/clientlibs'
 
   doLast {
     delete file(packageCompose.archiveFile).absolutePath

@@ -47,7 +47,7 @@ jar {
       // extract MANIFEST.MF
       def jarFile = file(jar.archiveFile).absolutePath
 
-      ant.unjar(src: jarFile, dest: "build/embed") {
+      ant.unjar(src: jarFile, dest: "${buildDir}/embed") {
         patternset {
           include name : "**/MANIFEST.MF"
         }
@@ -61,13 +61,13 @@ jar {
       }
 
       // update MANIFEST.MF
-      ant.manifest(file: "build/embed/META-INF/MANIFEST.MF", mode:"update") {
+      ant.manifest(file: "${buildDir}/embed/META-INF/MANIFEST.MF", mode:"update") {
         attribute name:"Bundle-ClassPath", value: bundleClassPath
         attribute name:"Sling-Model-Packages", value: "ca.dc.study.sling,ca.dc.wkndspa.core.models"
       }
 
       // update osgi bundle
-      ant.jar(update : true, destfile : jarFile, basedir : "lib", manifest: "build/embed/META-INF/MANIFEST.MF")
+      ant.jar(update : true, destfile : jarFile, basedir : "lib", manifest: "${buildDir}/embed/META-INF/MANIFEST.MF")
     }
   }
 }
@@ -115,7 +115,7 @@ dependencies() {
   compileOnly 'org.apache.httpcomponents:httpclient:4.5.6'
   compileOnly 'org.apache.httpcomponents:httpcore:4.4.10'
   //compileOnly 'mysql:mysql-connector-java:8.0.22'
-
+  
   //UnboundID LDAP SDK for Java
   compileOnly 'com.unboundid:unboundid-ldapsdk:6.0.4'
 
@@ -138,7 +138,7 @@ dependencies() {
   testImplementation "org.mockito:mockito-junit-jupiter:2.25.1"
   testImplementation "junit-addons:junit-addons:1.4"
 
-  //testImplementation fileTree(dir: 'build/libs', include: '*.jar')
+  //testImplementation fileTree(dir: "${buildDir}/libs", include: '*.jar')
 
   //testImplementation configurations.compileOnly
 }
