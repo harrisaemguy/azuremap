@@ -59,7 +59,7 @@
           <packageType>content</packageType>
           <accessControlHandling>merge</accessControlHandling>
           <filterSource>src/main/content/META-INF/vault/filter.xml</filterSource>
-          <jcrRootSourceDirectory>${project.basedir}/build/clientlibs/jcr_root,${project.basedir}/jcr_root,${project.basedir}/src/main/jcr_root,${project.basedir}/src/main/content/jcr_root,${project.basedir}/src/content/jcr_root,${project.build.outputDirectory}</jcrRootSourceDirectory>
+          <jcrRootSourceDirectory>${project.basedir}/target/clientlibs/jcr_root,${project.basedir}/jcr_root,${project.basedir}/src/main/jcr_root,${project.basedir}/src/main/content/jcr_root,${project.basedir}/src/content/jcr_root,${project.build.outputDirectory}</jcrRootSourceDirectory>
           <skipValidation>true</skipValidation>
           <dependencies>
           </dependencies>

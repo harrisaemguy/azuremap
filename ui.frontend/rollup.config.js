@@ -31,19 +31,19 @@ module.exports = function (env, argv) {
           {
             filter: '**/*.njk',
             url: 'copy',
-            assetsPath: `${__dirname}/build/webpack/${g1}/resources`,
+            assetsPath: `${__dirname}/target/webpack/${g1}/resources`,
             useHash: false,
           },
           {
             filter: '**/*.js',
             url: 'copy',
-            assetsPath: `${__dirname}/build/webpack/${g1}/resources`,
+            assetsPath: `${__dirname}/target/webpack/${g1}/resources`,
             useHash: false,
           },
           {
             filter: '**/*',
             url: 'copy',
-            assetsPath: `${__dirname}/build/webpack/${g1}/resources`,
+            assetsPath: `${__dirname}/target/webpack/${g1}/resources`,
             useHash: true, //avoid duplicates, and image name conflict
           },
         ];
@@ -114,7 +114,7 @@ module.exports = function (env, argv) {
               sourceMap:
                 process.env.NODE_ENV === 'production' ? false : 'inline',
               minimize: process.env.NODE_ENV === 'production1',
-              to: `${__dirname}/build/webpack/${g1}/c/d`,
+              to: `${__dirname}/target/webpack/${g1}/c/d`,
             }),
           ],
           onwarn: function (warning, warner) {
@@ -130,7 +130,7 @@ module.exports = function (env, argv) {
           },
           // external:['jquery'], // exclude some module to be part of generated bundle
           output: {
-            file: `build/webpack/${g1}/index.js`,
+            file: `target/webpack/${g1}/index.js`,
             format: 'umd', // umd and iife both works on browser
             name: `dc.${g1}`, // this is the name of the global object
             esModule: false,
