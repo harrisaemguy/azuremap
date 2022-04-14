@@ -7,6 +7,9 @@ export * from '../common/fileAttachment';
 import { renderStaticHtml } from '../common/generic';
 import moment from 'moment';
 
+// forms_online.getParams().afAcceptLang || 'en'
+export * from '../common/js-url';
+
 export function rootInit(fld) {
   guideBridge.getData({
     success: function (guideResultObject) {
