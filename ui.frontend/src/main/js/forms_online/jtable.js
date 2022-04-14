@@ -13,6 +13,8 @@ import './css/jtable.css';
 import { getAfFieldId, promise } from '../common/generic';
 import axios from 'axios/dist/axios';
 import moment from 'moment';
+// getParams().afAcceptLang || 'en'
+import { getParams } from '../common/js-url';
 
 dt(window, $);
 vbtn(window, $);
@@ -20,6 +22,16 @@ pbtn(window, $);
 bdt(window, $);
 kdt(window, $);
 cdt(window, $);
+
+const pageLang = getParams().afAcceptLang || 'en';
+function getFormDesc(desc, langCode) {
+  let descs = desc.split('|');
+  if (descs.length == 1 || 'en' === langCode) {
+    return descs[0];
+  } else {
+    return descs[1];
+  }
+}
 
 const sampleTitles = [
   {
@@ -70,28 +82,17 @@ function printAllVals(
   for (let i in obj) {
     if (typeof obj[i] === 'object') {
       if (
-        obj[i].hasOwnProperty('type') &&
-        obj[i]['type'] === 'guide' &&
-        obj[i].hasOwnProperty('sling:resourceType') &&
-        obj[i]['sling:resourceType'] === 'fd/fm/af/render'
+        (obj[i].hasOwnProperty('type') &&
+          obj[i]['type'] === 'guide' &&
+          obj[i].hasOwnProperty('sling:resourceType') &&
+          obj[i]['sling:resourceType'] === 'fd/fm/af/render') ||
+        (obj[i].hasOwnProperty('type') &&
+          obj[i]['type'] === 'pdfForm' &&
+          obj[i].hasOwnProperty('sling:resourceType') &&
+          obj[i]['sling:resourceType'] === 'fd/fm/xfaforms/render')
       ) {
         let desc = obj[i].metadata.description || '';
-        let cqtags = obj[i].metadata['cq:tags'] || '';
-        let mdate = moment(obj[i]['jcr:lastModified']).format('YYYY-MM-DD');
-        let obj_i = {
-          desc: desc || obj[i].metadata.title,
-          cqtags: cqtags,
-          mdate: mdate,
-          path: `<a target="_blank" href="${objPath}/${i}?wcmmode=disabled">${formName}</a>`,
-        };
-        jsObj.push(obj_i);
-      } else if (
-        obj[i].hasOwnProperty('type') &&
-        obj[i]['type'] === 'pdfForm' &&
-        obj[i].hasOwnProperty('sling:resourceType') &&
-        obj[i]['sling:resourceType'] === 'fd/fm/xfaforms/render'
-      ) {
-        let desc = obj[i].metadata.description || '';
+        desc = getFormDesc(desc, pageLang);
         let cqtags = obj[i].metadata['cq:tags'] || '';
         let mdate = moment(obj[i]['jcr:lastModified']).format('YYYY-MM-DD');
         let obj_i = {
