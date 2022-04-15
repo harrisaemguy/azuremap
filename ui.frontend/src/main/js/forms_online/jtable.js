@@ -10,11 +10,9 @@ import cdt from 'datatables.net-colreorder-dt';
 import 'datatables.net-colreorder-dt/css/colReorder.dataTables.css';
 
 import './css/jtable.css';
-import { getAfFieldId, promise } from '../common/generic';
+import { getAfFieldId, promise, urlParams } from '../common/generic';
 import axios from 'axios/dist/axios';
 import moment from 'moment';
-// getParams().afAcceptLang || 'en'
-import { getParams } from '../common/js-url';
 
 dt(window, $);
 vbtn(window, $);
@@ -23,7 +21,7 @@ bdt(window, $);
 kdt(window, $);
 cdt(window, $);
 
-const pageLang = getParams().afAcceptLang || 'en';
+const pageLang = urlParams().get('afAcceptLang') || 'en';
 function getFormDesc(desc, langCode) {
   let descs = desc.split('|');
   if (descs.length == 1 || 'en' === langCode) {

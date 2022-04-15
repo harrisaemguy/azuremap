@@ -159,3 +159,48 @@ export function prefill(data, panel) {
     }
   }
 }
+
+//var parser = new DOMParser();
+//var xmlDoc = parser.parseFromString(guideResultObject.data, "text/xml");
+//var afUnboundData_data = xmlDoc.getElementsByTagName('afUnboundData')[0].firstChild;
+export function initDataXml() {
+  return new Promise((resolve, reject) => {
+    guideBridge.getDataXML({
+      success: function (guideResultObject) {
+        console.log('xml data received' + guideResultObject.data);
+        let parser = new DOMParser();
+        let xmlDoc = parser.parseFromString(guideResultObject.data, 'text/xml');
+        resolve(xmlDoc);
+      },
+      error: function (guideResultObject) {
+        let msg = guideResultObject.getNextMessage();
+        let msgs = [];
+        msgs.push(msg);
+        while (msg != null) {
+          console.error(msg.message);
+          msg = guideResultObject.getNextMessage();
+          msgs.push(msg);
+        }
+        reject(msgs);
+      },
+    });
+  });
+}
+
+// "/data/fname"
+// dc.form_gac.initDataXml().then(function(data){ var x = dc.form_gac.getNodeValue_bypath(data, '/data/fname'); console.log(x);});
+export function getNodeValue_bypath(xml, path) {
+  console.log(xml);
+  let nodes = xml.evaluate(path, xml, null, XPathResult.ANY_TYPE, null);
+  let values = [];
+  while (true) {
+    let result = nodes.iterateNext();
+    if (result) {
+      values.push(result.childNodes[0].nodeValue);
+      result = nodes.iterateNext();
+    } else {
+      break;
+    }
+  }
+  return values;
+}

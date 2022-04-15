@@ -1,6 +1,7 @@
-import * as generic from '../common/generic';
 import * as prefill from '../common/prefill';
 import axios from 'axios/dist/axios';
+
+import { urlParams } from '../common/generic';
 
 let af_fields = [];
 let pk = '';
@@ -30,7 +31,7 @@ const afFormReadyListener = () => {
     af_fields[cmpName] = cmp;
   });
 
-  let dataRef = generic.getUrlParam('dataRef');
+  let dataRef = urlParams().get('dataRef');
   if (dataRef) {
     loadSurvey(dataRef).then((data) => {
       pk = data.Su_id;

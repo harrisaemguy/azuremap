@@ -1,55 +1,3 @@
-/*testing*/
-/*
-let myMap = new Map().set('age', 7).set('foo', 3);
-
-let str1 = mapToJsonStr(myMap);
-console.log(str1);
-console.log(jsonStrToMap(str1));
-let map2 = objToStrMap(myMap);
-console.log(map2);
-
-let myObj = { age: 7, foo: 3 };
-let map3 = objToStrMap(myObj);
-console.log(map3);
-*/
-
-export function mapToJsonStr(map) {
-  return JSON.stringify([...map]);
-}
-
-export function jsonStrToMap(jsonStr) {
-  return new Map(JSON.parse(jsonStr));
-}
-
-export function jsonStrToStrMap(jsonStr) {
-  let obj = JSON.parse(jsonStr);
-
-  return objToStrMap(obj);
-}
-
-export function objToStrMap(obj) {
-  if (obj instanceof Map) {
-    // obj.forEach((v, k, m) => {});
-    return obj;
-  } else {
-    let strMap = new Map();
-    for (let k of Object.keys(obj)) {
-      strMap.set(k, obj[k]);
-    }
-    return strMap;
-  }
-}
-
-export function strMapToObj(strMap) {
-  let obj = Object.create(null);
-  for (let [k, v] of strMap) {
-    // We don’t escape the key '__proto__'
-    // which can cause problems on older engines
-    obj[k] = v;
-  }
-  return obj;
-}
-
 /*
  * //const processChange = debounce(fn); // <button onclick="processChange()">Click me</button> // window.addEventListener("scroll", processChange); //ex: let fn1 = debounce(fn)
  */
@@ -121,40 +69,13 @@ export function promise(cssSelector, visible = false) {
   });
 }
 
-export function yourLocation() {
-  return new Promise((resolve, reject) => {
-    navigator.geolocation.getCurrentPosition(
-      (position) => {
-        let userPosition = {
-          lng: position.coords.longitude,
-          lat: position.coords.latitude,
-        };
-        resolve(userPosition);
-      },
-      (error) => {
-        // If an error occurs when trying to access the users position information, display an error message.
-        switch (error.code) {
-          case error.PERMISSION_DENIED:
-            alert('User denied the request for Geolocation.');
-            break;
-          case error.POSITION_UNAVAILABLE:
-            alert('Position information is unavailable.');
-            break;
-          case error.TIMEOUT:
-            alert('The request to get user position timed out.');
-            break;
-          case error.UNKNOWN_ERROR:
-            alert('An unknown error occurred.');
-            break;
-        }
-        resolve(undefined);
-      }
-    );
-  });
+// urlParams().get('wcmmode'), toString()
+export function urlParams() {
+  return new URL(document.location).searchParams;
 }
 
 // ex: getUrlParam('wcmmode')
-export function getUrlParam(name, url = window.location.href) {
+function getUrlParam(name, url = window.location.href) {
   let results = new RegExp('[?&]' + name.toLowerCase() + '=([^&#]*)').exec(
     url.toLowerCase()
   );

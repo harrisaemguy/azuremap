@@ -9,6 +9,76 @@ import 'jquery.md5';
 import './fileAttachment.css';
 import download from 'downloadjs';
 
+function getDorXml() {
+  return new Promise(function (resolve) {
+    guideBridge.getDataXML({
+      success: function (guideResultObject) {
+        console.log('xml data received' + guideResultObject.data);
+        resolve(guideResultObject.data);
+      },
+      error: function (guideResultObject) {
+        console.error('API Failed');
+        var msg = guideResultObject.getNextMessage();
+        while (msg != null) {
+          console.error(msg.message);
+          msg = guideResultObject.getNextMessage();
+        }
+        resolve({});
+      },
+    });
+  });
+}
+
+function getAttachedFiles() {
+  let files = [];
+  guideBridge.visit((cmp) => {
+    if ('guideFileUpload' === cmp.className) {
+      cmp.fileList.forEach((obj) => {
+        for (let i = 0; i < obj[0].files.length; i++) {
+          let file = obj[0].files[i];
+          files.push(file);
+        }
+      });
+    }
+  });
+
+  return files;
+}
+
+// sample method when click "view dor" button
+export function basicDor_withAttachment() {
+  let files = getAttachedFiles();
+
+  getDorXml().then((xml) => {
+    console.log('xml string:' + xml);
+    let fdm_url = '/bin/dorServices.dor';
+
+    let formData = new FormData();
+    formData.append('formPath', '/content/forms/af/dc-sandbox/db-test');
+    formData.append('data', xml);
+
+    //console.log('append file binary');
+    for (let i = 0; i < files.length; i++) {
+      console.log('append file binary');
+      formData.append('file_' + i, files[i], files[i].name);
+    }
+
+    let extraData = { responseType: 'arraybuffer' };
+    axios
+      .post(fdm_url, formData, extraData)
+      .then((response) => {
+        let headerLine = response.headers['content-disposition'];
+        let startFileNameIndex = headerLine.indexOf('filename=') + 9;
+        let filename = headerLine.substring(startFileNameIndex);
+        filename = filename || 'jsHtml.pdf';
+        download(response.data, filename, response.headers['content-type']);
+      })
+      .catch(function (error) {
+        console.log(error);
+      });
+  });
+}
+
 // jdatatable link onclick
 export function downloadDor(doc_id) {
   let fdm_url = '/bin/dbServices.dor';
