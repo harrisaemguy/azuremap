@@ -1,0 +1,71 @@
+// serverSide, responsive
+<table id="example" class="display responsive nowrap" style="width: 100%;">
+    <thead>
+        <tr>
+            <th>First name</th>
+            <th>Last name</th>
+            <th>Position</th>
+            <th>Salary</th>
+        </tr>
+    </thead>
+    <tfoot>
+        <tr>
+            <th>First name</th>
+            <th>Last name</th>
+            <th>Position</th>
+            <th>Salary</th>
+        </tr>
+    </tfoot>
+</table>
+
+$(document).ready(function () {
+  var table = $('#example').DataTable({
+    processing: true,
+    serverSide: true,
+    keys: true,
+    dom: 'Bfrtip',
+    select: {
+      style: 'single'
+    },
+    buttons: [{
+        text: 'Select all',
+        action: function () {
+          table.rows().select();
+        }
+      },
+      {
+        text: 'Select none',
+        action: function () {
+          table.rows().deselect();
+        }
+      },
+      {
+        text: 'Get selected data',
+        action: function () {
+          var datas = table.rows({
+            selected: true
+          }).data().toArray();
+          console.log(datas);
+        }
+      }
+    ],
+    ajax: '/bin/dc/jdatatable',
+    columns: [{
+        data: 'first_name'
+      },
+      {
+        data: 'last_name'
+      },
+      {
+        data: 'position'
+      },
+      {
+        data: 'salary'
+      }
+    ]
+  });
+
+  $('#example').on('click', 'tr', function () {
+    console.log(table.row(this).data());
+  });
+});

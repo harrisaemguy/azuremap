@@ -1,25 +1,9 @@
-import dt from 'datatables.net-dt'; // import from IIFE module
-import 'datatables.net-dt/css/jquery.dataTables.css';
-import vbtn from 'datatables.net-buttons/js/buttons.colVis';
-import pbtn from 'datatables.net-buttons/js/buttons.print';
-import bdt from 'datatables.net-buttons-dt';
-import 'datatables.net-buttons-dt/css/buttons.dataTables.css';
-import kdt from 'datatables.net-keytable-dt';
-import 'datatables.net-keytable-dt/css/keyTable.dataTables.css';
-import cdt from 'datatables.net-colreorder-dt';
-import 'datatables.net-colreorder-dt/css/colReorder.dataTables.css';
+// this clientlib depends on dc.jtable
 
 import './css/jtable.css';
 import { getAfFieldId, promise, urlParams } from '../common/generic';
 import axios from 'axios/dist/axios';
 import moment from 'moment';
-
-dt(window, $);
-vbtn(window, $);
-pbtn(window, $);
-bdt(window, $);
-kdt(window, $);
-cdt(window, $);
 
 const pageLang = urlParams().get('afAcceptLang') || 'en';
 function getFormDesc(desc, langCode) {
