@@ -15,37 +15,70 @@ function getFormDesc(desc, langCode) {
   }
 }
 
-const sampleTitles = [
-  {
-    title: 'id',
-    data: null,
-    searchable: false,
-    orderable: false,
-    width: '10%',
-    render: (data, type, row, meta) => meta.row + 1,
-  },
-  {
-    data: 'path',
-    title: 'Form Number',
-    width: '20%',
-  },
-  {
-    data: 'desc',
-    title: 'Description',
-    width: '50%',
-  },
-  {
-    data: 'mdate',
-    title: 'Modified Date',
-    width: '20%',
-  },
-  {
-    data: 'cqtags',
-    title: 'Tags',
-    searchable: true,
-    visible: false,
-  },
-];
+const sampleTitles = {
+  en: [
+    {
+      title: 'id',
+      data: null,
+      searchable: false,
+      orderable: false,
+      width: '10%',
+      render: (data, type, row, meta) => meta.row + 1,
+    },
+    {
+      data: 'path',
+      title: 'Form Number',
+      width: '20%',
+    },
+    {
+      data: 'desc',
+      title: 'Description',
+      width: '50%',
+    },
+    {
+      data: 'mdate',
+      title: 'Modified Date',
+      width: '20%',
+    },
+    {
+      data: 'cqtags',
+      title: 'Tags',
+      searchable: true,
+      visible: false,
+    },
+  ],
+  fr: [
+    {
+      title: 'id',
+      data: null,
+      searchable: false,
+      orderable: false,
+      width: '10%',
+      render: (data, type, row, meta) => meta.row + 1,
+    },
+    {
+      data: 'path',
+      title: 'Form Number(fr)',
+      width: '20%',
+    },
+    {
+      data: 'desc',
+      title: 'Description(fr)',
+      width: '50%',
+    },
+    {
+      data: 'mdate',
+      title: 'Modified Date(fr)',
+      width: '20%',
+    },
+    {
+      data: 'cqtags',
+      title: 'Tags',
+      searchable: true,
+      visible: false,
+    },
+  ],
+};
 
 const sampleTbl = `
   <table class="display nowrap" style="width:100%">
@@ -119,7 +152,7 @@ function aemJson(tbl, ajaxUrl = '/content/dam/formsanddocuments.7.json') {
 export function applyFormTableAjax(
   fld,
   gridTpl = sampleTbl,
-  columns = sampleTitles
+  columns = sampleTitles[pageLang]
 ) {
   // let user configure rootDir
   let plHld = fld.jsonModel.placeholderText;
@@ -144,6 +177,7 @@ export function applyFormTableAjax(
       ordering: true,
       info: false,
       colReorder: true,
+      language: dc.jtable.languages[pageLang],
       // dom: 'Bfrtip',
       // buttons: ['colvis', 'print'],
     });
