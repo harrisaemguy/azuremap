@@ -58,17 +58,17 @@ const sampleTitles = {
     },
     {
       data: 'path',
-      title: 'Form Number(fr)',
+      title: 'Numéro de formulaire',
       width: '20%',
     },
     {
       data: 'desc',
-      title: 'Description(fr)',
+      title: 'La description',
       width: '50%',
     },
     {
       data: 'mdate',
-      title: 'Modified Date(fr)',
+      title: 'Date modifiée',
       width: '20%',
     },
     {
@@ -171,7 +171,7 @@ export function applyFormTableAjax(
   promise(`#${fldId} table`).then(() => {
     let table = $(`#${fldId} table`).DataTable({
       columns: columns,
-      pageLength: 5,
+      pageLength: 10,
       keys: true,
       paging: true,
       ordering: true,
@@ -281,7 +281,7 @@ export function applyDataTableAjax(
   promise(`#${fldId} table`).then(() => {
     let table = $(`#${fldId} table`).DataTable({
       columns: columns,
-      pageLength: 5,
+      pageLength: 10,
       keys: true,
       paging: true,
       ordering: true,
@@ -407,7 +407,7 @@ export function loadMyRequest(
   promise(`#${fldId} table`).then(() => {
     let table = $(`#${fldId} table`).DataTable({
       columns: columns,
-      pageLength: 5,
+      pageLength: 10,
       keys: true,
       paging: true,
       ordering: true,

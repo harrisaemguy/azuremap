@@ -2,7 +2,7 @@
 <jcr:root xmlns:xmp="http://ns.adobe.com/xap/1.0/" xmlns:sling="http://sling.apache.org/jcr/sling/1.0" xmlns:fd="http://www.adobe.com/aemfd/fd/1.0" xmlns:dam="http://www.day.com/dam/1.0" xmlns:jcr="http://www.jcp.org/jcr/1.0" xmlns:nt="http://www.jcp.org/jcr/nt/1.0"
     jcr:primaryType="dam:Asset">
     <jcr:content
-        jcr:lastModified="{Date}2022-04-11T22:46:49.468-04:00"
+        jcr:lastModified="{Date}2022-04-20T15:15:08.781-04:00"
         jcr:primaryType="dam:AssetContent"
         sling:resourceType="fd/fm/af/render"
         guide="1"
@@ -12,13 +12,13 @@
             jcr:primaryType="nt:unstructured"
             xmp:CreatorTool="AEM Forms Editor"
             allowedRenderFormat="HTML"
-            author="admin"
+            author="wux3"
             availableInMobileApp="{Boolean}false"
+            dordetails="Generic"
             dorType="none"
-            formmodel="jsonschema"
+            formmodel="none"
             hasCustomThumbnail="{Boolean}false"
-            schemaRef="x.schema.json"
-            themeRef="/content/dam/formsanddocuments-themes/themeLibrary/wetcompliance"
+            themeRef="/content/dam/formsanddocuments-themes/ca-gc-international-forms/wet-4-international"
             title="Welcome to Global Affairs Canada - Forms Online"/>
     </jcr:content>
 </jcr:root>
