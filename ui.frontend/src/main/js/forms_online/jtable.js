@@ -90,7 +90,7 @@ const sampleTbl = `
 // type: pdfForm, sling:resourceType:fd/fm/xfaforms/render, metadata.jcr:title
 function printAllVals(
   obj,
-  objPath = '/content/dam/formsanddocuments',
+  objPath,
   jsObj = [],
   formName = ''
 ) {
@@ -110,11 +110,17 @@ function printAllVals(
         desc = getFormDesc(desc, pageLang);
         let cqtags = obj[i].metadata['cq:tags'] || '';
         let mdate = moment(obj[i]['jcr:lastModified']).format('YYYY-MM-DD');
+        let formPath = objPath;
+        if(obj[i]['type'] !== 'pdfForm') {
+          formPath = formPath.replace('/content/dam/formsanddocuments', '/content/forms/af') + '.html?afAcceptLang=' + pageLang;
+        } else {
+          formPath = formPath + '/' + i + '.pdf';
+        }
         let obj_i = {
           desc: desc || obj[i].metadata.title,
           cqtags: cqtags,
           mdate: mdate,
-          path: `<a target="_blank" href="${objPath}/${i}?wcmmode=disabled">${formName}</a>`,
+          path: `<a target="_blank" href="${formPath}">${formName}</a>`,
         };
         jsObj.push(obj_i);
       }
