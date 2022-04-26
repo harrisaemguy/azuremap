@@ -15,6 +15,8 @@ function getFormDesc(desc, langCode) {
   }
 }
 
+const formDescMap = new Map();
+
 const sampleTitles = {
   en: [
     {
@@ -123,6 +125,7 @@ function printAllVals(
           path: `<a target="_blank" href="${formPath}">${formName}</a>`,
         };
         jsObj.push(obj_i);
+        formDescMap.set(formName, obj_i.desc);
       }
 
       let subPath = objPath + '/' + i;
