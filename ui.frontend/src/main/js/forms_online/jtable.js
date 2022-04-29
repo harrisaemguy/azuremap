@@ -23,7 +23,7 @@ const loadJcrForms = (ajaxUrl, objPath) => {
   } else {
     let prom = new Promise((resolve) => {
       axios
-        .get(url)
+        .get(ajaxUrl)
         .then((response) => {
           let jsObj = printAllVals(response.data, objPath);
 
