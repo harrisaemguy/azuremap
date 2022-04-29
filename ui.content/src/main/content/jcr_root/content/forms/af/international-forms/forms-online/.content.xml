@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<jcr:root xmlns:sling="http://sling.apache.org/jcr/sling/1.0" xmlns:fd="http://www.adobe.com/aemfd/fd/1.0" xmlns:cq="http://www.day.com/jcr/cq/1.0" xmlns:jcr="http://www.jcp.org/jcr/1.0" xmlns:nt="http://www.jcp.org/jcr/nt/1.0"
+<jcr:root xmlns:sling="http://sling.apache.org/jcr/sling/1.0" xmlns:fd="http://www.adobe.com/aemfd/fd/1.0" xmlns:cq="http://www.day.com/jcr/cq/1.0" xmlns:jcr="http://www.jcp.org/jcr/1.0" xmlns:mix="http://www.jcp.org/jcr/mix/1.0" xmlns:nt="http://www.jcp.org/jcr/nt/1.0"
     jcr:primaryType="cq:Page">
     <jcr:content
         cq:deviceGroups="[mobile/groups/responsive]"
-        cq:lastModified="{Date}2022-04-20T15:15:08.781-04:00"
+        cq:lastModified="{Date}2022-04-29T16:41:16.367-04:00"
         cq:lastModifiedBy="wux3"
         cq:template="/conf/ca-gc-international-forms/settings/wcm/templates/basic-adaptive-form-template"
         jcr:language="en"
@@ -12,13 +12,13 @@
         sling:resourceType="adobeuxp/af/components/page2/aftemplatedpage">
         <guideContainer
             fd:version="1.1"
-            jcr:lastModified="{Date}2022-04-20T14:44:45.174-04:00"
+            jcr:lastModified="{Date}2022-04-25T13:54:04.831-04:00"
             jcr:lastModifiedBy="wux3"
             jcr:primaryType="nt:unstructured"
             sling:resourceType="fd/af/components/guideContainer"
             actionType="fd/af/components/guidesubmittype/restendpoint"
             autoSaveStrategyType="fd/fp/components/actions/autosave/timebased"
-            clientLibRef="ca-gc-international-forms.commons,dc.forms_online"
+            clientLibRef="ca-gc-international-forms.commons,dc.jtable,dc.forms_online"
             disableSwipeGesture="{Boolean}false"
             dorType="none"
             enableFocusOnFirstField="{Boolean}true"
@@ -161,7 +161,29 @@
                                         name="myRequest"
                                         textIsRich="true"
                                         validateOnStepCompletion="{Boolean}false">
-                                        <items jcr:primaryType="nt:unstructured"/>
+                                        <items
+                                            jcr:primaryType="nt:unstructured"
+                                            sling:resourceType="fd/af/layouts/gridFluidLayout2">
+                                            <guidetextbox
+                                                jcr:created="{Date}2022-04-29T12:57:22.847-04:00"
+                                                jcr:createdBy="wux3"
+                                                jcr:lastModified="{Date}2022-04-29T16:41:16.338-04:00"
+                                                jcr:lastModifiedBy="wux3"
+                                                jcr:primaryType="nt:unstructured"
+                                                jcr:title="My Requests"
+                                                sling:resourceType="fd/af/components/guidetextbox"
+                                                autofillFieldKeyword="name"
+                                                guideNodeClass="guideTextBox"
+                                                hideTitle="true"
+                                                name="textbox1651251442915"
+                                                placeholderText="/content/dam/formsanddocuments/international-forms/production.7.json,/content/dam/formsanddocuments/international-forms/pdf-forms.7.json"
+                                                textIsRich="[true,true,true]">
+                                                <fd:rules jcr:primaryType="nt:unstructured"/>
+                                                <fd:scripts
+                                                    fd:init="[{&quot;script&quot;:{&quot;field&quot;:&quot;guide.guideRootPanel.page.tabs.myRequest.textbox1651251442915&quot;\,&quot;event&quot;:&quot;Initialize&quot;\,&quot;model&quot;:{&quot;nodeName&quot;:&quot;EVENT_SCRIPTS&quot;}\,&quot;content&quot;:&quot;dc.forms_online.applyMyReqTableAjax(this);&quot;}\,&quot;nodeName&quot;:&quot;SCRIPTMODEL&quot;\,&quot;version&quot;:1\,&quot;enabled&quot;:true}]"
+                                                    jcr:primaryType="nt:unstructured"/>
+                                            </guidetextbox>
+                                        </items>
                                         <layout
                                             jcr:primaryType="nt:unstructured"
                                             sling:resourceType="fd/af/layouts/gridFluidLayout2"
@@ -197,16 +219,6 @@
                             nonNavigable="{Boolean}true"
                             toolbarPosition="Bottom"/>
                     </basics1>
-                    <formpagedetails
-                        jcr:created="{Date}2022-04-08T13:24:01.275-04:00"
-                        jcr:createdBy="admin"
-                        jcr:lastModified="{Date}2022-04-20T15:15:08.766-04:00"
-                        jcr:lastModifiedBy="wux3"
-                        jcr:primaryType="nt:unstructured"
-                        sling:resourceType="ca-gc-international-forms/components/form/formPageDetails"
-                        formModifiedDate="{Date}2022-04-20T15:11:00.000-04:00"
-                        formNumber="Forms Portal"
-                        formVersion="1"/>
                 </items>
             </rootPanel>
             <formpagedetails
