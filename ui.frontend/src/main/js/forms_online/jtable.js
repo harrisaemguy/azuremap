@@ -15,6 +15,31 @@ function getFormDesc(desc, langCode) {
   }
 }
 
+//[cachekey, Promise]
+let jcrFormsPromises = new Map();
+const loadJcrForms = (ajaxUrl, objPath) => {
+  if (jcrFormsPromises.get(ajaxUrl)) {
+    return jcrFormsPromises.get(ajaxUrl);
+  } else {
+    let prom = new Promise((resolve) => {
+      axios
+        .get(url)
+        .then((response) => {
+          let jsObj = printAllVals(response.data, objPath);
+
+          resolve(jsObj);
+        })
+        .catch((error) => {
+          console.error('ajax error during get ' + error.message);
+          resolve([]);
+        });
+    });
+
+    jcrFormsPromises.set(ajaxUrl, prom);
+    return prom;
+  }
+};
+
 const formDescMap = new Map();
 
 const sampleTitles = {
@@ -192,8 +217,20 @@ export function applyFormTableAjax(
       // buttons: ['colvis', 'print'],
     });
 
-    plHld.split(',').map((url) => {
-      aemJson(table, url.trim());
+    let proms = [];
+    plHld.split(',').map((ajaxUrl) => {
+      ajaxUrl = ajaxUrl.trim();
+      let objPath = ajaxUrl.substring(0, ajaxUrl.indexOf('.'));
+      let prom = loadJcrForms(ajaxUrl, objPath);
+      proms.push(prom);
+    });
+
+    Promise.all(proms).then((objs) => {
+      objs.map((jsObj) => {
+        jsObj.map((item) => {
+          table.row.add(item).draw();
+        });
+      });
     });
   });
 }
@@ -412,7 +449,6 @@ export function applyDataTableAjax(
       // buttons: ['colvis', 'print'],
     });
 
-    // aemJson(table, plHld);
     loadFDMByStatus(table, { status: 'pending' });
   });
 }
