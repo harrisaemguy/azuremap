@@ -326,6 +326,17 @@ export function applyMyReqTableAjax(
   gridTpl = sampleTbl,
   columns = myRequestCols['en']
 ) {
+  // let user configure rootDir
+  let plHld = fld.jsonModel.placeholderText;
+  if (
+    plHld &&
+    plHld.startsWith('/content/dam/formsanddocuments') &&
+    plHld.endsWith('.json')
+  );
+  else {
+    plHld = '/content/dam/formsanddocuments.7.json';
+  }
+
   let fldId = getAfFieldId(fld);
   $(`#${fldId} input`).hide().after(gridTpl);
 
@@ -342,7 +353,18 @@ export function applyMyReqTableAjax(
       // buttons: ['colvis', 'print'],
     });
 
-    loadMyRequest(table);
+    let proms = [];
+    plHld.split(',').map((ajaxUrl) => {
+      ajaxUrl = ajaxUrl.trim();
+      let objPath = ajaxUrl.substring(0, ajaxUrl.indexOf('.'));
+      let prom = loadJcrForms(ajaxUrl, objPath);
+      proms.push(prom);
+    });
+
+    Promise.all(proms).then((objs) => {
+      // wait till jcr tables are parsed
+      loadMyRequest(table);
+    });
   });
 }
 
