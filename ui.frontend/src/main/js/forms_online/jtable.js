@@ -60,7 +60,7 @@ const sampleTitles = {
     },
     {
       data: 'path',
-      title: 'Numéro de formulaire',
+      title: 'NumÃ©ro de formulaire',
       width: '20%',
     },
     {
@@ -70,7 +70,7 @@ const sampleTitles = {
     },
     {
       data: 'mdate',
-      title: 'Date modifiée',
+      title: 'Date modifiÃ©e',
       width: '20%',
     },
     {
@@ -90,12 +90,7 @@ const sampleTbl = `
 // [{title, desc, path:'/content/dam/formsanddocuments/dc-sandbox/helloworld/jcr:content?wcmmode=disabled'}]
 // http://localhost:4502/content/dam/formsanddocuments/OoPdfFormExample.pdf/jcr:content?type=pdf
 // type: pdfForm, sling:resourceType:fd/fm/xfaforms/render, metadata.jcr:title
-function printAllVals(
-  obj,
-  objPath,
-  jsObj = [],
-  formName = ''
-) {
+function printAllVals(obj, objPath, jsObj = [], formName = '') {
   for (let i in obj) {
     if (typeof obj[i] === 'object') {
       if (
@@ -113,8 +108,14 @@ function printAllVals(
         let cqtags = obj[i].metadata['cq:tags'] || '';
         let mdate = moment(obj[i]['jcr:lastModified']).format('YYYY-MM-DD');
         let formPath = objPath;
-        if(obj[i]['type'] !== 'pdfForm') {
-          formPath = formPath.replace('/content/dam/formsanddocuments', '/content/forms/af') + '.html?afAcceptLang=' + pageLang;
+        if (obj[i]['type'] !== 'pdfForm') {
+          formPath =
+            formPath.replace(
+              '/content/dam/formsanddocuments',
+              '/content/forms/af'
+            ) +
+            '.html?afAcceptLang=' +
+            pageLang;
         } else {
           formPath = formPath + '/' + i + '.pdf';
         }
@@ -125,7 +126,7 @@ function printAllVals(
           path: `<a target="_blank" href="${formPath}">${formName}</a>`,
         };
         jsObj.push(obj_i);
-        formDescMap.set(formName, obj_i.desc);
+        formDescMap.set(formName.replace(/\D/g, ''), obj_i.desc);
       }
 
       let subPath = objPath + '/' + i;
@@ -194,6 +195,117 @@ export function applyFormTableAjax(
     plHld.split(',').map((url) => {
       aemJson(table, url.trim());
     });
+  });
+}
+
+let myRequestCols = {
+  en: [
+    {
+      title: 'id',
+      data: null,
+      searchable: false,
+      orderable: false,
+      width: '10%',
+      render: (data, type, row, meta) => meta.row + 1,
+    },
+    {
+      data: 'form_id',
+      title: 'Form Number',
+      width: '20%',
+    },
+    {
+      data: 'form_id',
+      title: 'Description',
+      width: '30%',
+      render: function render(data, type) {
+        if (type === 'display' && formDescMap.get(data)) {
+          return formDescMap.get(data);
+        }
+
+        return data;
+      },
+    },
+    {
+      data: 'status',
+      title: 'Status',
+      width: '10%',
+    },
+    {
+      data: 'submitted_on',
+      title: 'Submitted Date',
+      width: '20%',
+      render: function render(data, type) {
+        if (type === 'display') {
+          return data.substring(0, 10);
+        }
+
+        return data;
+      },
+    },
+    {
+      data: 'document_id',
+      render: function render(data, type) {
+        if (type === 'display') {
+          return `<a target="_blank" href="/bin/international/document?ID=${data}">View</a>`;
+        }
+
+        return data;
+      },
+    },
+  ],
+  fr: [],
+};
+
+function loadMyRequest(tbl) {
+  let fdm_url = '/bin/international/bpace';
+  $.ajax({
+    type: 'GET',
+    url: fdm_url,
+    data: {
+      func: 'MyRequests',
+      definition: '0',
+      output: 'json',
+      rows: 100,
+      offset: 0,
+      format: 1,
+      _: new Date().getTime(),
+    },
+    success: function (data, textStatus, jqXHR) {
+      console.log(data);
+      data.rows.map(function (item) {
+        tbl.row.add(item).draw();
+      });
+    },
+    error: function (xrequest, textStatus, errorThrown) {
+      alert(xrequest.responseText);
+    },
+    cache: false,
+    async: true,
+  });
+}
+
+export function applyMyReqTableAjax(
+  fld,
+  gridTpl = sampleTbl,
+  columns = myRequestCols['en']
+) {
+  let fldId = getAfFieldId(fld);
+  $(`#${fldId} input`).hide().after(gridTpl);
+
+  promise(`#${fldId} table`).then(() => {
+    let table = $(`#${fldId} table`).DataTable({
+      columns: columns,
+      pageLength: 10,
+      keys: true,
+      paging: true,
+      ordering: true,
+      info: false,
+      colReorder: true,
+      // dom: 'Bfrtip',
+      // buttons: ['colvis', 'print'],
+    });
+
+    loadMyRequest(table);
   });
 }
 

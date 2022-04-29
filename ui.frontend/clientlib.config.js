@@ -39,7 +39,8 @@ module.exports = {
   context: __dirname,
 
   // path to the clientlib root folder (output)
-  clientLibRoot: 'target/clientlibs/jcr_root/apps/ca-gc-international-forms/clientlibs',
+  clientLibRoot:
+    'target/clientlibs/jcr_root/apps/ca-gc-international-forms/clientlibs',
 
   libs: (function () {
     getAllFiles('target/webpack/').map(function (absName) {
