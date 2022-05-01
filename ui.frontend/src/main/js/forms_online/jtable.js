@@ -316,7 +316,7 @@ let myRequestCols = {
       data: 'document_id',
       render: function render(data, type) {
         if (type === 'display') {
-          return `<a target="_blank" href="/bin/international/document?ID=${data}" onclick="printJS({printable:'/bin/international/document?ID=${data}', type:'pdf', showModal:true}); return false;">View</a>`;
+          return `<a target="_blank" href="#${data}" onclick="printJS({printable:'/bin/international/document?ID=${data}', type:'pdf', showModal:true});">View</a>`;
         }
 
         return data;
