@@ -4,7 +4,8 @@ import './css/jtable.css';
 import { getAfFieldId, promise, urlParams } from '../common/generic';
 import axios from 'axios/dist/axios';
 //printJS({printable:'docs/xx_large_printjs.pdf', type:'pdf', showModal:true})
-export {printJS} from 'print-js'
+import 'print-js/dist/print.js'
+
 import download from 'downloadjs';
 import moment from 'moment';
 
