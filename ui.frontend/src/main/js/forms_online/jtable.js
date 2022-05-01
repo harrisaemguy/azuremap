@@ -313,7 +313,7 @@ let myRequestCols = {
       data: 'document_id',
       render: function render(data, type) {
         if (type === 'display') {
-          return `<a target="_blank" href="#${data}" onclick="return dc.forms_online.getDor('${data}');">View</a>`;
+          return `<a target="_blank" href="/bin/international/document?ID=${data}">View</a>`;
         }
 
         return data;
