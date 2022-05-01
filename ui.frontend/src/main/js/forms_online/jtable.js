@@ -3,6 +3,7 @@
 import './css/jtable.css';
 import { getAfFieldId, promise, urlParams } from '../common/generic';
 import axios from 'axios/dist/axios';
+import download from 'downloadjs';
 import moment from 'moment';
 
 const pageLang = urlParams().get('afAcceptLang') || 'en';
@@ -235,6 +236,35 @@ export function applyFormTableAjax(
   });
 }
 
+export function getDor(doc_id) {
+  let fdm_url = '/bin/international/document';
+  let extraData = {
+    params: {
+      ID: 'doc_id',
+      _: new Date().getTime(),
+    },
+    responseType: 'arraybuffer',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+  };
+
+  axios
+    .get(fdm_url, extraData)
+    .then((response) => {
+      let headerLine = response.headers['content-disposition'];
+      let startFileNameIndex = headerLine.indexOf('filename=') + 9;
+      let filename = headerLine.substring(startFileNameIndex);
+      filename = filename || 'jsHtml.pdf';
+      download(response.data, filename, response.headers['content-type']);
+    })
+    .catch(function (error) {
+      console.log(error);
+    });
+
+  return false;
+}
+
 let myRequestCols = {
   en: [
     {
@@ -283,7 +313,7 @@ let myRequestCols = {
       data: 'document_id',
       render: function render(data, type) {
         if (type === 'display') {
-          return `<a target="_blank" href="/bin/international/document?ID=${data}">View</a>`;
+          return `<a target="_blank" href="#${data}" onclick="return dc.forms_online.getDor('${data}');">View</a>`;
         }
 
         return data;
@@ -295,10 +325,8 @@ let myRequestCols = {
 
 function loadMyRequest(tbl) {
   let fdm_url = '/bin/international/bpace';
-  $.ajax({
-    type: 'GET',
-    url: fdm_url,
-    data: {
+  let extraData = {
+    params: {
       func: 'MyRequests',
       definition: '0',
       output: 'json',
@@ -307,17 +335,12 @@ function loadMyRequest(tbl) {
       format: 1,
       _: new Date().getTime(),
     },
-    success: function (data, textStatus, jqXHR) {
-      console.log(data);
-      data.rows.map(function (item) {
-        tbl.row.add(item).draw();
-      });
-    },
-    error: function (xrequest, textStatus, errorThrown) {
-      alert(xrequest.responseText);
-    },
-    cache: false,
-    async: true,
+  };
+  axios.get(fdm_url, extraData).then((response) => {
+    console.log(response.data);
+    response.data.rows.map(function (item) {
+      tbl.row.add(item).draw();
+    });
   });
 }
 
@@ -575,7 +598,7 @@ function loadDBByStatus(tbl) {
     async: true,
   });
 }
-export function loadMyRequest(
+export function loadMyRequest_dbhelper(
   fld,
   gridTpl = sampleTbl,
   columns = employeeTblCols
