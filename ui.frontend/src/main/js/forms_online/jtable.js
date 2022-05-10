@@ -49,7 +49,7 @@ const formDescMap = new Map();
 const sampleTitles = {
   en: [
     {
-      title: 'id',
+      title: 'Id',
       data: null,
       searchable: false,
       orderable: false,
@@ -80,7 +80,7 @@ const sampleTitles = {
   ],
   fr: [
     {
-      title: 'id',
+      title: 'Id',
       data: null,
       searchable: false,
       orderable: false,
@@ -135,6 +135,8 @@ function printAllVals(obj, objPath, jsObj = [], formName = '') {
         let desc = obj[i].metadata.description || '';
         desc = getFormDesc(desc, pageLang);
         let cqtags = obj[i].metadata['cq:tags'] || '';
+        let formNum = obj[i].metadata['title'] || formName;
+        let active = obj[i].metadata['active'] || 'No';
         let mdate = moment(obj[i]['jcr:lastModified']).format('YYYY-MM-DD');
         let formPath = objPath;
         if (obj[i]['type'] !== 'pdfForm') {
@@ -152,9 +154,12 @@ function printAllVals(obj, objPath, jsObj = [], formName = '') {
           desc: desc || obj[i].metadata.title,
           cqtags: cqtags,
           mdate: mdate,
-          path: `<a target="_blank" href="${formPath}">${formName}</a>`,
+          path: `<a target="_blank" href="${formPath}">${formNum}</a>`,
         };
-        jsObj.push(obj_i);
+        if('Yes' === active) {
+          jsObj.push(obj_i);
+        }
+        
         formDescMap.set(formName.replace(/\D/g, ''), obj_i.desc);
       }
 
@@ -205,7 +210,9 @@ export function applyFormTableAjax(
   }
 
   let fldId = getAfFieldId(fld);
+  $(`#${fldId} input`).parent().removeClass('guideFieldWidget');
   $(`#${fldId} input`).hide().after(gridTpl);
+
 
   promise(`#${fldId} table`).then(() => {
     let table = $(`#${fldId} table`).DataTable({
@@ -271,7 +278,7 @@ export function getDor(doc_id) {
 let myRequestCols = {
   en: [
     {
-      title: 'id',
+      title: 'Id',
       data: null,
       searchable: false,
       orderable: false,
@@ -364,6 +371,7 @@ export function applyMyReqTableAjax(
   }
 
   let fldId = getAfFieldId(fld);
+  $(`#${fldId} input`).parent().removeClass('guideFieldWidget');
   $(`#${fldId} input`).hide().after(gridTpl);
 
   promise(`#${fldId} table`).then(() => {
@@ -482,6 +490,7 @@ export function applyDataTableAjax(
   columns = pendingTblCols
 ) {
   let fldId = getAfFieldId(fld);
+  $(`#${fldId} input`).parent().removeClass('guideFieldWidget');
   $(`#${fldId} input`).hide().after(gridTpl);
 
   promise(`#${fldId} table`).then(() => {
@@ -547,7 +556,7 @@ let submitTblCols = [
 let employeeTblCols = [
   {
     data: 'id',
-    title: 'ID',
+    title: 'Id',
   },
   {
     data: 'FileName',
@@ -607,6 +616,7 @@ export function loadMyRequest_dbhelper(
   columns = employeeTblCols
 ) {
   let fldId = getAfFieldId(fld);
+  $(`#${fldId} input`).parent().removeClass('guideFieldWidget');
   $(`#${fldId} input`).hide().after(gridTpl);
 
   promise(`#${fldId} table`).then(() => {
