@@ -4,7 +4,7 @@ import './css/jtable.css';
 import { getAfFieldId, promise, urlParams } from '../common/generic';
 import axios from 'axios/dist/axios';
 //printJS({printable:'docs/xx_large_printjs.pdf', type:'pdf', showModal:true})
-import 'print-js/dist/print.js'
+import 'print-js/dist/print.js';
 
 import download from 'downloadjs';
 import moment from 'moment';
@@ -156,10 +156,10 @@ function printAllVals(obj, objPath, jsObj = [], formName = '') {
           mdate: mdate,
           path: `<a target="_blank" href="${formPath}">${formNum}</a>`,
         };
-        if('Yes' === active) {
+        if ('Yes' === active) {
           jsObj.push(obj_i);
         }
-        
+
         formDescMap.set(formName.replace(/\D/g, ''), obj_i.desc);
       }
 
@@ -212,7 +212,6 @@ export function applyFormTableAjax(
   let fldId = getAfFieldId(fld);
   $(`#${fldId} input`).parent().removeClass('guideFieldWidget');
   $(`#${fldId} input`).hide().after(gridTpl);
-
 
   promise(`#${fldId} table`).then(() => {
     let table = $(`#${fldId} table`).DataTable({
@@ -275,6 +274,7 @@ export function getDor(doc_id) {
   return false;
 }
 
+let statuses = new Map();
 let myRequestCols = {
   en: [
     {
@@ -306,6 +306,13 @@ let myRequestCols = {
       data: 'status',
       title: 'Status',
       width: '10%',
+      render: function render(data, type) {
+        if (type === 'display' && statuses.get(data)) {
+          return statuses.get(data);
+        }
+
+        return data;
+      },
     },
     {
       data: 'submitted_on',
@@ -346,12 +353,27 @@ function loadMyRequest(tbl) {
       _: new Date().getTime(),
     },
   };
-  axios.get(fdm_url, extraData).then((response) => {
-    console.log(response.data);
-    response.data.rows.map(function (item) {
-      tbl.row.add(item).draw();
+
+  axios
+    .get(fdm_url, {
+      params: {
+        func: 'liststatus',
+        output: 'json',
+        _: new Date().getTime(),
+      },
+    })
+    .then((response1) => {
+      response1.data.statuses.map((st) => {
+        statuses.set(st['key'], st['description_en']);
+      });
+
+      axios.get(fdm_url, extraData).then((response) => {
+        console.log(response.data);
+        response.data.rows.map(function (item) {
+          tbl.row.add(item).draw();
+        });
+      });
     });
-  });
 }
 
 export function applyMyReqTableAjax(
