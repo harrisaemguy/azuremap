@@ -4,6 +4,7 @@ target/
 coverage
 content/
 doc/
+node/
 
 # Ignore all HTML files:
 *.html

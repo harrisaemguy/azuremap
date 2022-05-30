@@ -7,15 +7,19 @@ import commonjs from '@rollup/plugin-commonjs';
 const url = require('postcss-url');
 import postcss from 'rollup-plugin-postcss';
 import autoprefixer from 'autoprefixer';
+import sassvars from 'postcss-simple-vars';
+import unwrap_nested from 'postcss-nested';
+import csslatest from 'postcss-cssnext';
+import cssnano from 'cssnano';
 import strip from '@rollup/plugin-strip';
 import peerDepsExternal from 'rollup-plugin-peer-deps-external';
-import typescript from '@rollup/plugin-typescript';
 import json from '@rollup/plugin-json';
+import image from '@rollup/plugin-image';
 
 module.exports = function (env, argv) {
   const configs = (function () {
     let glob = require('glob');
-    let initial = {};
+
     let jsObj = glob
       .sync('src/main/js/**/index.js', { cwd: __dirname })
       .map(function (inputFile) {
@@ -50,9 +54,15 @@ module.exports = function (env, argv) {
         return {
           input: inputFile,
           plugins: [
-            nodeResolve({ preferBuiltins: false, browser: true }),
+            nodeResolve({
+              preferBuiltins: false,
+              browser: true,
+              jsnext: true,
+              main: true,
+            }),
             autoInstall(),
             json(),
+            image(),
             commonjs({
               include: ['node_modules/**', 'src/**/cjs/*'],
             }),
@@ -67,6 +77,7 @@ module.exports = function (env, argv) {
             process.env.NODE_ENV === 'production' &&
               strip({
                 functions: ['console.log', 'MyClass.*'],
+                include: ['**/*.js'],
               }),
             //!g1.endsWith('_react') && peerDepsExternal(),
             babel({
@@ -106,14 +117,20 @@ module.exports = function (env, argv) {
                 ],
               ],
             }),
-            process.env.NODE_ENV === 'production1' && terser(), // comments this for non-mini format
+            process.env.NODE_ENV === 'production' && terser(), // comments this for non-mini format
             postcss({
-              plugins: [autoprefixer(), url(url_options)],
+              plugins: [
+                autoprefixer(),
+                url(url_options),
+                sassvars(),
+                unwrap_nested(),
+                csslatest({ warnForDuplicates: false }),
+              ],
               extensions: ['.css'],
               extract: true, // separate file index.css, good for AEM clientlib
               sourceMap:
                 process.env.NODE_ENV === 'production' ? false : 'inline',
-              minimize: process.env.NODE_ENV === 'production1',
+              minimize: process.env.NODE_ENV === 'production',
               to: `${__dirname}/target/webpack/${g1}/c/d`,
             }),
           ],
