@@ -2,6 +2,7 @@ package ca.dc;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Set;
 
 import javax.jcr.Session;
 import javax.servlet.Servlet;
@@ -19,6 +20,7 @@ import com.day.cq.workflow.WorkflowService;
 import com.day.cq.workflow.WorkflowSession;
 import com.day.cq.workflow.exec.WorkItem;
 import com.day.cq.workflow.exec.Workflow;
+import com.day.cq.workflow.metadata.MetaDataMap;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
@@ -89,11 +91,40 @@ public class WorkflowTest extends SlingAllMethodsServlet {
     }
   }
 
+  private void listMyItems(SlingHttpServletRequest request, SlingHttpServletResponse response)
+      throws ServletException, IOException {
+
+    ResourceResolver resourceResolver = request.getResourceResolver();
+    Session session = (Session) resourceResolver.adaptTo((Class) Session.class);
+    response.setContentType("application/json");
+    WorkflowSession wfSession = workflowService.getWorkflowSession(session);
+
+    try {
+      ArrayNode inboxItems = objectMapper.createArrayNode();
+      WorkItem[] items = wfSession.getActiveWorkItems();
+      for (WorkItem item : items) {
+        ObjectNode objNd = inboxItems.addObject();
+        objNd.put("assignee", item.getCurrentAssignee());
+        objNd.put("itemId", item.getId());
+        MetaDataMap dataMap = item.getWorkflowData().getMetaDataMap();
+        Set<String> names = dataMap.keySet();
+        for (String name : names) {
+          Object val = dataMap.get(name);
+          objNd.put(name, val.toString());
+        }
+      }
+
+      response.getWriter().write(inboxItems.toString());
+    } catch (WorkflowException e) {
+      e.printStackTrace();
+    }
+  }
+
   @Override
   protected void doGet(SlingHttpServletRequest request, SlingHttpServletResponse response)
       throws ServletException, IOException {
     try {
-      listRunning(request, response);
+      listMyItems(request, response);
     } catch (Exception e) {
       e.printStackTrace();
     }
