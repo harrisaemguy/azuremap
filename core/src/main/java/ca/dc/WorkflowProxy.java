@@ -40,7 +40,7 @@ import org.osgi.service.metatype.annotations.ObjectClassDefinition;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-@Component(service = Servlet.class, property = { "sling.servlet.paths=" + "/bin/dc/WF_P" })
+@Component(service = Servlet.class, property = { "sling.servlet.paths=" + "/bin/international/wf_p" })
 @Designate(ocd = WorkflowProxy.Config.class)
 public class WorkflowProxy extends SlingAllMethodsServlet {
 
@@ -115,19 +115,19 @@ public class WorkflowProxy extends SlingAllMethodsServlet {
   public @interface Config {
 
     @AttributeDefinition
-    String targetHost() default "";
+    String targetHost() default "aemosgidev01";
 
     @AttributeDefinition
-    int targetPort() default 80;
+    int targetPort() default 4502;
 
     @AttributeDefinition
-    String targetUrl() default "";
+    String targetUrl() default "/bin/international/wf";
 
     @AttributeDefinition
-    String username() default "";
+    String username() default "wux3";
 
     @AttributeDefinition(type = AttributeType.PASSWORD)
-    String password() default "";
+    String password() default "^Jpxwu0328aem";
   }
 
   public class ApiResponseHandler implements ResponseHandler<String> {

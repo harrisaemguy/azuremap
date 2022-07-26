@@ -1,15 +1,57 @@
 // this clientlib depends on dc.jtable
 
 import './css/jtable.css';
-import { getAfFieldId, promise, urlParams } from '../common/generic';
+import {
+  getAfFieldId,
+  promise,
+  urlParams,
+  renderStaticHtml,
+} from '../common/generic';
 import axios from 'axios/dist/axios';
 //printJS({printable:'docs/xx_large_printjs.pdf', type:'pdf', showModal:true})
 import 'print-js/dist/print.js';
 
 import download from 'downloadjs';
 import moment from 'moment';
+import DOMPurify from 'dompurify';
 
 const pageLang = urlParams().get('afAcceptLang') || 'en';
+// 0: Disabled, 1: Warning, 2: Info, 3: Error
+// 1: alert alert-warning
+// 2: alert alert-info
+// 3: alert alert-danger
+export function initBulletin(fld) {
+  let fldId = getAfFieldId(fld);
+  let fdm_url = '/bin/international/bpace';
+  let extraData = {
+    params: {
+      func: 'getMessage',
+      messageID: 'Bulletin',
+      definition: '0',
+      output: 'json',
+      _: new Date().getTime(),
+    },
+  };
+
+  axios.get(fdm_url, extraData).then((response) => {
+    console.log(response.data);
+    if (Object.keys(response.data).length === 0 || response.data.state == 0) {
+      fld.visible = false;
+    } else {
+      let description = response.data[`description_${pageLang}`];
+      let cleanTpl = DOMPurify.sanitize(description, { FORCE_BODY: true });
+      renderStaticHtml(fld, cleanTpl);
+      if (response.data.state == 1) {
+        $(`#${fldId}`).addClass('alert').addClass('alert-warning');
+      } else if (response.data.state == 2) {
+        $(`#${fldId}`).addClass('alert').addClass('alert-info');
+      } else {
+        $(`#${fldId}`).addClass('alert').addClass('alert-danger');
+      }
+    }
+  });
+}
+
 function getFormDesc(desc, langCode) {
   let descs = desc.split('|');
   if (descs.length == 1 || 'en' === langCode) {
@@ -49,12 +91,8 @@ const formDescMap = new Map();
 const sampleTitles = {
   en: [
     {
-      title: 'Id',
-      data: null,
-      searchable: false,
-      orderable: false,
-      width: '10%',
-      render: (data, type, row, meta) => meta.row + 1,
+      data: 'toplist',
+      visible: false,
     },
     {
       data: 'path',
@@ -80,12 +118,8 @@ const sampleTitles = {
   ],
   fr: [
     {
-      title: 'Id',
-      data: null,
-      searchable: false,
-      orderable: false,
-      width: '10%',
-      render: (data, type, row, meta) => meta.row + 1,
+      data: 'toplist',
+      visible: false,
     },
     {
       data: 'path',
@@ -137,6 +171,7 @@ function printAllVals(obj, objPath, jsObj = [], formName = '') {
         let cqtags = obj[i].metadata['cq:tags'] || '';
         let formNum = obj[i].metadata['title'] || formName;
         let active = obj[i].metadata['active'] || 'No';
+        let toplist = obj[i].metadata['toplist'] || 'No';
         let mdate = moment(obj[i]['jcr:lastModified']).format('YYYY-MM-DD');
         let formPath = objPath;
         if (obj[i]['type'] !== 'pdfForm') {
@@ -155,12 +190,16 @@ function printAllVals(obj, objPath, jsObj = [], formName = '') {
           cqtags: cqtags,
           mdate: mdate,
           path: `<a target="_blank" href="${formPath}">${formNum}</a>`,
+          toplist: toplist,
         };
         if ('Yes' === active) {
           jsObj.push(obj_i);
         }
 
-        formDescMap.set(formName.replace(/\D/g, ''), obj_i.desc);
+        //formDescMap.set(formName.replace(/\D/g, ''), obj_i.desc);
+        if(formDescMap.get(formNum) == undefined || 'Yes' === active) {
+          formDescMap.set(formNum, obj_i.desc);
+        }
       }
 
       let subPath = objPath + '/' + i;
@@ -223,6 +262,10 @@ export function applyFormTableAjax(
       info: false,
       colReorder: true,
       language: dc.jtable.languages[pageLang],
+      order: [
+        [0, 'desc'],
+        [1, 'asc'],
+      ],
       // dom: 'Bfrtip',
       // buttons: ['colvis', 'print'],
     });
@@ -277,14 +320,6 @@ export function getDor(doc_id) {
 let statuses = new Map();
 let myRequestCols = {
   en: [
-    {
-      title: 'Id',
-      data: null,
-      searchable: false,
-      orderable: false,
-      width: '10%',
-      render: (data, type, row, meta) => meta.row + 1,
-    },
     {
       data: 'form_id',
       title: 'Form Number',
@@ -364,7 +399,7 @@ function loadMyRequest(tbl) {
     })
     .then((response1) => {
       response1.data.statuses.map((st) => {
-        statuses.set(st['key'], st['description_en']);
+        statuses.set(st['key'], st[`description_${pageLang}`]);
       });
 
       axios.get(fdm_url, extraData).then((response) => {
@@ -405,6 +440,10 @@ export function applyMyReqTableAjax(
       ordering: true,
       info: false,
       colReorder: true,
+      order: [
+        [3, 'desc'],
+        [0, 'asc'],
+      ],
       // dom: 'Bfrtip',
       // buttons: ['colvis', 'print'],
     });

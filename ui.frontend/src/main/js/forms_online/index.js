@@ -4,7 +4,7 @@
 //export * from '../common/inputSuffix';
 export * from './jtable';
 export * from '../common/fileAttachment';
-import { renderStaticHtml } from '../common/generic';
+import { renderStaticHtml, urlParams, sleep } from '../common/generic';
 import moment from 'moment';
 
 export function rootInit(fld) {
@@ -42,6 +42,29 @@ export function rootInit(fld) {
 
 export function userNameInit(fld) {
   let user = gc.international._getUserInfoBySignetID();
-  let userName = `<p>${user.surname}, ${user.givenName}</p>`;
+  let userName = `<p><b>${user.surname}, ${user.givenName}</b></p>`;
   renderStaticHtml(fld, userName);
 }
+
+let tabs = [
+  'guide[0].guide1[0].guideRootPanel[0].page[0].tabs[0].forms[0]',
+  'guide[0].guide1[0].guideRootPanel[0].page[0].tabs[0].myRequest[0]',
+  'guide[0].guide1[0].guideRootPanel[0].page[0].tabs[0].plPendingApproval[0]',
+];
+const afFormReadyListener = function () {
+  let pagex = urlParams().get('page') || '0';
+
+  if (pagex !== '0') {
+    sleep(100).then(() => {
+      window.guideBridge.setFocus(tabs[pagex]);
+    });
+  }
+};
+
+window.addEventListener('bridgeInitializeStart', function (evnt) {
+  // 1. get hold of the guideBridge object
+  var guideBridge = evnt.detail.guideBridge;
+
+  // 2. Register a callback to be executed when the Adaptive Form gets initialized
+  guideBridge.connect(afFormReadyListener);
+});

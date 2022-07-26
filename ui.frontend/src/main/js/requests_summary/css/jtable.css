@@ -15,14 +15,6 @@
   background-color: #f9f4d4;
 }
 
-.alert.alert-info {
-  background-color: #d7faff;
-}
-
-.alert.alert-danger {
-  background-color: #f3e9e8;
-}
-
 a.guideNavIcon.guideTopNavIcon.nested_false {
   font-weight: bold;
   font-size: larger;

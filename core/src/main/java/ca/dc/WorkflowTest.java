@@ -28,7 +28,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
-@Component(service = Servlet.class, property = { "sling.servlet.paths=" + "/bin/dc/WF" })
+@Component(service = Servlet.class, property = { "sling.servlet.paths=" + "/bin/international/wf" })
 public class WorkflowTest extends SlingAllMethodsServlet {
 
   @Reference
@@ -131,24 +131,20 @@ public class WorkflowTest extends SlingAllMethodsServlet {
   private void listAllActiveItems(SlingHttpServletRequest request, SlingHttpServletResponse response)
       throws ServletException, IOException {
 
+        response.getWriter().write("listAllActiveItems");
     Map<String, Object> map = new HashMap<String, Object>();
-    map.put(ResourceResolverFactory.SUBSERVICE, "Workflow-service");
+    map.put(ResourceResolverFactory.SUBSERVICE, "Workflow-user");
     ResourceResolver resourceResolver = null;
     try {
       resourceResolver = resourceResolverFactory.getServiceResourceResolver(map);
-    } catch (Exception e) {
-      String msg = e.getMessage();
-      response.getWriter().write(msg);
-      response.setStatus(500);
-    } finally {
-      resourceResolver.close();
-    }
+      response.getWriter().write("resourceResolver");
+
 
     Session session = (Session) resourceResolver.adaptTo((Class) Session.class);
     response.setContentType("application/json");
     WorkflowSession wfSession = workflowService.getWorkflowSession(session);
 
-    try {
+
       ArrayNode inboxItems = objectMapper.createArrayNode();
       WorkItem[] items = wfSession.getActiveWorkItems();
       for (WorkItem item : items) {
@@ -157,24 +153,29 @@ public class WorkflowTest extends SlingAllMethodsServlet {
         objNd.put("itemId", item.getId());
         MetaDataMap dataMap = item.getWorkflowData().getMetaDataMap();
         Set<String> names = dataMap.keySet();
-        for (String name : names) {
+        /*for (String name : names) {
           Object val = dataMap.get(name);
           if (val instanceof String) {
             objNd.put(name, val.toString());
           }
-        }
+        }*/
       }
 
       response.getWriter().write(inboxItems.toString());
-    } catch (WorkflowException e) {
+    } catch (Exception e) {
+      response.getWriter().write(e.getMessage());
       e.printStackTrace();
+    } finally {
+      resourceResolver.close();
     }
+
   }
 
   @Override
   protected void doGet(SlingHttpServletRequest request, SlingHttpServletResponse response)
       throws ServletException, IOException {
     try {
+      response.getWriter().write("do Get");
       listAllActiveItems(request, response);
     } catch (Exception e) {
       e.printStackTrace();

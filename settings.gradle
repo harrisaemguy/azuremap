@@ -24,6 +24,7 @@ collection3.each {
   if(it.length()>1) {
     //println 'subPrj:        ' + it
     include(it)
-    //project(":${it}").name = rootProject.name + '_' + it.replace(':', '_')
+    if(it == 'ui.apps')
+    project(":${it}").name = 'usermap'
   }
 }
