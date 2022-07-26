@@ -1,9 +1,7 @@
 package ca.dc;
 
 import java.io.IOException;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 import javax.jcr.Session;
@@ -15,6 +13,7 @@ import org.apache.sling.api.SlingHttpServletResponse;
 import org.apache.sling.api.resource.ResourceResolver;
 import org.apache.sling.api.resource.ResourceResolverFactory;
 import org.apache.sling.api.servlets.SlingAllMethodsServlet;
+import org.apache.sling.jcr.api.SlingRepository;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
@@ -30,6 +29,10 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 
 @Component(service = Servlet.class, property = { "sling.servlet.paths=" + "/bin/international/wf" })
 public class WorkflowTest extends SlingAllMethodsServlet {
+
+  @Reference
+  SlingRepository slingRepository;
+  //.loginAdministrative
 
   @Reference
   private ResourceResolverFactory resourceResolverFactory;
@@ -131,20 +134,11 @@ public class WorkflowTest extends SlingAllMethodsServlet {
   private void listAllActiveItems(SlingHttpServletRequest request, SlingHttpServletResponse response)
       throws ServletException, IOException {
 
-        response.getWriter().write("listAllActiveItems");
-    Map<String, Object> map = new HashMap<String, Object>();
-    map.put(ResourceResolverFactory.SUBSERVICE, "Workflow-user");
-    ResourceResolver resourceResolver = null;
-    try {
-      resourceResolver = resourceResolverFactory.getServiceResourceResolver(map);
-      response.getWriter().write("resourceResolver");
-
-
-    Session session = (Session) resourceResolver.adaptTo((Class) Session.class);
     response.setContentType("application/json");
-    WorkflowSession wfSession = workflowService.getWorkflowSession(session);
-
-
+    Session session = null;
+    try {
+      session = slingRepository.loginAdministrative(null);
+      WorkflowSession wfSession = workflowService.getWorkflowSession(session);
       ArrayNode inboxItems = objectMapper.createArrayNode();
       WorkItem[] items = wfSession.getActiveWorkItems();
       for (WorkItem item : items) {
@@ -153,12 +147,12 @@ public class WorkflowTest extends SlingAllMethodsServlet {
         objNd.put("itemId", item.getId());
         MetaDataMap dataMap = item.getWorkflowData().getMetaDataMap();
         Set<String> names = dataMap.keySet();
-        /*for (String name : names) {
+        for (String name : names) {
           Object val = dataMap.get(name);
           if (val instanceof String) {
             objNd.put(name, val.toString());
           }
-        }*/
+        }
       }
 
       response.getWriter().write(inboxItems.toString());
@@ -166,16 +160,16 @@ public class WorkflowTest extends SlingAllMethodsServlet {
       response.getWriter().write(e.getMessage());
       e.printStackTrace();
     } finally {
-      resourceResolver.close();
+      if (session != null) {
+        session.logout();
+      }
     }
-
   }
 
   @Override
   protected void doGet(SlingHttpServletRequest request, SlingHttpServletResponse response)
       throws ServletException, IOException {
     try {
-      response.getWriter().write("do Get");
       listAllActiveItems(request, response);
     } catch (Exception e) {
       e.printStackTrace();
