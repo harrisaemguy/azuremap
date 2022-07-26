@@ -54,6 +54,7 @@ public class WorkflowProxy extends SlingAllMethodsServlet {
   private String password;
 
   private CloseableHttpClient getHttpClient() throws Exception {
+    if(this.httpClient == null) {
 
     SSLContextBuilder builder = new SSLContextBuilder();
     builder.loadTrustMaterial(null, new TrustSelfSignedStrategy());
@@ -63,6 +64,7 @@ public class WorkflowProxy extends SlingAllMethodsServlet {
     credentialsProvider.setCredentials(AuthScope.ANY, new UsernamePasswordCredentials(username, password));
     this.httpClient = HttpClients.custom().setSSLSocketFactory(sslsf).setDefaultCredentialsProvider(credentialsProvider)
         .build();
+    }
 
     return this.httpClient;
   }
@@ -88,7 +90,7 @@ public class WorkflowProxy extends SlingAllMethodsServlet {
       HttpClientContext preemptive = HttpClientContext.create();
       preemptive.setAuthCache(authCache);
 
-      String resp = httpClient.execute(host, getReq, new ApiResponseHandler(), preemptive);
+      String resp = getHttpClient().execute(host, getReq, new ApiResponseHandler(), preemptive);
 
       response.setContentType("application/json");
       response.getWriter().write(resp);
