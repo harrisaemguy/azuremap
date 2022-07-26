@@ -88,9 +88,8 @@ public class WorkflowProxy extends SlingAllMethodsServlet {
       HttpClientContext preemptive = HttpClientContext.create();
       preemptive.setAuthCache(authCache);
 
-      HttpResponse httpResp = httpClient.execute(host, getReq, preemptive);
+      String resp = httpClient.execute(host, getReq, new ApiResponseHandler(), preemptive);
 
-      String resp = httpClient.execute(getReq, new ApiResponseHandler());
       response.setContentType("application/json");
       response.getWriter().write(resp);
     } catch (Exception e) {
