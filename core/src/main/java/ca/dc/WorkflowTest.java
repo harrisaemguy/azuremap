@@ -157,7 +157,6 @@ public class WorkflowTest extends SlingAllMethodsServlet {
 
       response.getWriter().write(inboxItems.toString());
     } catch (Exception e) {
-      response.getWriter().write(e.getMessage());
       e.printStackTrace();
     } finally {
       if (session != null) {

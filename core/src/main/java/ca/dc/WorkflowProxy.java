@@ -54,16 +54,16 @@ public class WorkflowProxy extends SlingAllMethodsServlet {
   private String password;
 
   private CloseableHttpClient getHttpClient() throws Exception {
-    if(this.httpClient == null) {
+    if (this.httpClient == null) {
 
-    SSLContextBuilder builder = new SSLContextBuilder();
-    builder.loadTrustMaterial(null, new TrustSelfSignedStrategy());
-    SSLConnectionSocketFactory sslsf = new SSLConnectionSocketFactory(builder.build(), NoopHostnameVerifier.INSTANCE);
+      SSLContextBuilder builder = new SSLContextBuilder();
+      builder.loadTrustMaterial(null, new TrustSelfSignedStrategy());
+      SSLConnectionSocketFactory sslsf = new SSLConnectionSocketFactory(builder.build(), NoopHostnameVerifier.INSTANCE);
 
-    CredentialsProvider credentialsProvider = new BasicCredentialsProvider();
-    credentialsProvider.setCredentials(AuthScope.ANY, new UsernamePasswordCredentials(username, password));
-    this.httpClient = HttpClients.custom().setSSLSocketFactory(sslsf).setDefaultCredentialsProvider(credentialsProvider)
-        .build();
+      CredentialsProvider credentialsProvider = new BasicCredentialsProvider();
+      credentialsProvider.setCredentials(AuthScope.ANY, new UsernamePasswordCredentials(username, password));
+      this.httpClient = HttpClients.custom().setSSLSocketFactory(sslsf)
+          .setDefaultCredentialsProvider(credentialsProvider).build();
     }
 
     return this.httpClient;
