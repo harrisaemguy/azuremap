@@ -4,8 +4,8 @@
   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
-  <groupId>com.github.eirslett</groupId>
-  <artifactId>example</artifactId>
+  <groupId>ca.gc.international</groupId>
+  <artifactId>ca.gc.international.ui.frontend</artifactId>
   <version>1.0.0-SNAPSHOT</version>
   <packaging>content-package</packaging>
 
@@ -54,8 +54,7 @@
         <extensions>true</extensions>
         <version>1.1.4</version>
         <configuration>
-          <!--group>ca.ircc.aem.dcpilot</group>
-          <name>passport-forms.ui.content</name-->
+
           <packageType>content</packageType>
           <accessControlHandling>merge</accessControlHandling>
           <filterSource>src/main/content/META-INF/vault/filter.xml</filterSource>
